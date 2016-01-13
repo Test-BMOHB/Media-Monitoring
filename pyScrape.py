@@ -6,17 +6,11 @@ import requests, csv, re, time
 def scrapeInfo(mainURL, mainContent, xPath):
     li = []
     mainLinksXPath = mainContent.xpath(xPath)
+    mainLinksXPath = list(set(mainLinksXPath))
     for mainLinksElements in mainLinksXPath:
-        link = tostring(mainLinksElements)
-##  Takes out <a href="
-        link = link[9:]
-##	Splits text on spaces
-        link = link.split()
-        link = link[0]
-        link = link.split('">')
-##  Only grab the link and not the rest of the HTML 'a' tag
-        link = link[0]
-##	Takes '/' off end of mainURL
+##  Only grabs the href of the 'a' tag
+        link = mainLinksElements.get('href')
+##  Takes '/' off end of mainURL
         url = mainURL[:-1]
         if re.search(url, link) is None:
             link = url + link
@@ -24,6 +18,8 @@ def scrapeInfo(mainURL, mainContent, xPath):
         if re.search("https://my.backpage.com/classifieds", link) is not None or re.search("http://toronto.backpage.com/adult/?page=", link) is not None or re.search("http://my.backpage.com/classifieds", link) is not None or re.search(mainURL, link) is None:
             continue
         phoneNumber = []
+        emailAddress = []
+        websiteLink = []
         linkRequest = requests.get(link)
         linkContent = html.fromstring(linkRequest.content)
 ##  Only grabs HTML tags with class = "postingBody"
@@ -33,10 +29,12 @@ def scrapeInfo(mainURL, mainContent, xPath):
             text = tostring(linkXElement)
 ##  Take out small icons in text
             icons = re.findall(r'&#\d*;', text)
+            icons = list(set(icons))
             for icon in icons:
                 text = re.sub(icon, '', text)
 ##  Take out HTML tags             
             tags = re.findall('<[^>]+>', text)
+            tags = list(set(tags))
             for tag in tags:
                 text = text.replace(tag, '')
 ##  Take out whitespace
@@ -98,27 +96,17 @@ def scrapeInfo(mainURL, mainContent, xPath):
                     number = number.replace(',','')
                     if len(number) == 10 or len(number) == 11:
                         phoneNumber.append(number)
-##  Only grabs HTML 'a' tags in the tags that have class = "postingBody"
-        emailAddress = []
-        websiteLink = []
-        linkXPath = linkContent.xpath('//*[@class="postingBody"]/a')
-        for linkXElement in linkXPath:
-            emailAddress = []
-            websiteLink = []
-            textA = tostring(linkXElement)
-            if 'mailto:' in textA:
-                start = textA.find('"mailto:')
-                end = textA.find('">')
-                if start != -1 and end != -1:
-                    textA = textA[start+8:end]
-                    emailAddress.append(textA)
-            if 'http' in textA:
-                start = textA.find('http')
-                end = textA.find('">')
-                if start != -1 and end != -1:
-                    textA = textA[start:end]
-                    websiteLink.append(textA)
+##  Only grabs HTML 'a' tags
+            for s in linkXElement.findall('.//a'):
+                s = s.get('href')
+                if s is not None:
+                    if 'mailto:' in s:
+                        s = s[8:]
+                        emailAddress.append(s)
+                    elif 'http' in s:
+                        websiteLink.append(s)
 ##  Adds list item
+        link = make_tiny(link)
         li.append([phoneNumber,emailAddress,websiteLink,[link]])
     return li
 
@@ -164,6 +152,18 @@ def endTimer(st):
     tot = ("{0:.1f}".format(round(tot,2)))
     print "It took " + str(tot) + " seconds to complete process."
 
+##  Make tiny URL to hide actual URL
+def make_tiny(url):
+    request_url = ('http://tinyurl.com/create.php?url=' + url)
+    response = requests.get(request_url)
+    content = html.fromstring(response.content)
+    xPath = content.xpath('//*[@class="indent"]')
+    for i in xPath:
+        for s in i.findall('.//a'):
+            s = s.get('href')
+            if 'preview' not in s:
+                return s
+
 ##  Function to remove exact duplicate list entries
 def removeDuplicates(dedup):
     print len(dedup)
@@ -175,9 +175,8 @@ def removeDuplicates(dedup):
     return finalList
 
 ##  Main Function
-def main():
+def main(mainURL):
     startTime = time.time()
-    mainURL = "http://toronto.backpage.com/"
     currDate = datetime.now()
 ##  Make currDate Yesterday's date
     currDate = currDate - timedelta(days=1)
@@ -230,5 +229,5 @@ def main():
                 exit()
             increment = increment + 1
 
-##  Run main
-main()
+mainURL = "http://toronto.backpage.com/"
+main(mainURL)
