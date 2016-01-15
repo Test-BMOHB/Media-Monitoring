@@ -32,7 +32,7 @@ def scrapeInfo(mainURL, mainContent, xPath):
             icons = list(set(icons))
             for icon in icons:
                 text = re.sub(icon, '', text)
-##  Take out HTML tags             
+##  Take out HTML tags
             tags = re.findall('<[^>]+>', text)
             tags = list(set(tags))
             for tag in tags:
@@ -106,7 +106,7 @@ def scrapeInfo(mainURL, mainContent, xPath):
                     elif 'http' in s:
                         websiteLink.append(s)
 ##  Adds list item
-        link = make_tiny(link)
+        link = make_tinyURL(link)
         li.append([phoneNumber,emailAddress,websiteLink,[link]])
     return li
 
@@ -145,34 +145,34 @@ def startTimer():
     start = time.time()
     return start
 
-##  End timer and print
+##  End timer
 def endTimer(st):
     end = time.time()
     tot = end - st
     tot = ("{0:.1f}".format(round(tot,2)))
-    print "It took " + str(tot) + " seconds to complete process."
+    endStr = "It took " + str(tot) + " seconds to complete process."
+    return endStr
 
-##  Make tiny URL to hide actual URL
-def make_tiny(url):
-    request_url = ('http://tinyurl.com/create.php?url=' + url)
+##  Make tiny URL to hide actual URL from url
+def make_tinyURL(url):
+    request_url = ('http://tinyurl.com/api-create.php?url=' + url)
     response = requests.get(request_url)
     content = html.fromstring(response.content)
-    xPath = content.xpath('//*[@class="indent"]')
-    for i in xPath:
-        for s in i.findall('.//a'):
-            s = s.get('href')
-            if 'preview' not in s:
-                return s
+    return content.text
 
 ##  Function to remove exact duplicate list entries
 def removeDuplicates(dedup):
-    print len(dedup)
     finalList = []
     for x in dedup:
         if x not in finalList:
             finalList.append(x)
-    print len(finalList)
     return finalList
+
+##  Write to log
+def writeToLog(text):
+    logFile = open('/var/www/html/pylog.txt','a')
+    logFile.write(text)
+    logFile.close()
 
 ##  Main Function
 def main(mainURL):
@@ -184,50 +184,55 @@ def main(mainURL):
     liData = []
     increment = 1
 ##  Increment through 999 possible pages
-    with open('ScreenScrape.csv','w') as scrapeFile:
-        while increment < 1000:
-            print "Page: " + str(increment)
-            if increment == 1:
-                mainRequest = requests.get(mainURL + "adult/")
-            else:
-                mainRequest = requests.get(mainURL + "adult/?page=" + str(increment))
-            mainContent = html.fromstring(mainRequest.content)
-            date = mainContent.xpath('//*[@class="date"]')
-            for dateStr in date:
-                dateStr = tostring(dateStr)
-                dateStr = re.search("\w{3}. \w{3}. \d{1,2}", dateStr)
-                dateStr = datetime.strptime(dateStr.group(), '%a. %b. %d').date()
-                dateStr = dateStr.replace(year=datetime.now().year)
-                dateStr = dateStr.strftime('%Y-%m-%d')
+    writeToLog("*************************** " + currDate + " ***************************\n")
+    with open('/var/www/html/ScreenScrape.csv','w') as scrapeFile:
+        try:
+            while increment < 1000:
+                writeToLog("Page: " + str(increment) + "\n")
+                if increment == 1:
+                    mainRequest = requests.get(mainURL + "adult/")
+                else:
+                    mainRequest = requests.get(mainURL + "adult/?page=" + str(increment))
+                mainContent = html.fromstring(mainRequest.content)
+                date = mainContent.xpath('//*[@class="date"]')
+                for dateStr in date:
+                    dateStr = tostring(dateStr)
+                    dateStr = re.search("\w{3}. \w{3}. \d{1,2}", dateStr)
+                    dateStr = datetime.strptime(dateStr.group(), '%a. %b. %d').date()
+                    dateStr = dateStr.replace(year=datetime.now().year)
+                    dateStr = dateStr.strftime('%Y-%m-%d')
 ##  Compare current date to date on webpage
-            if dateStr == currDate:
-                startT = startTimer()
-                print "Main Scrape"
-                liData.extend(scrapeInfo(mainURL, mainContent, '/html/body/div//*[@href]'))
-                endTimer(startT)
+                if dateStr == currDate:
+                    startT = startTimer()
+                    writeToLog("Main Scrape\n")
+                    liData.extend(scrapeInfo(mainURL, mainContent, '/html/body/div//*[@href]'))
 ##  Extend liData to include anything from the sponsorBoxContent xPath
-                startT = startTimer()
-                print "Sponsor Scrape"
-                liData.extend(scrapeInfo(mainURL, mainContent, '//*[@class="sponsorBoxContent"]/a'))
-                endTimer(startT)
-            elif currDate < dateStr and currDate <> '':
+                    liData.extend(scrapeInfo(mainURL, mainContent, '//*[@class="sponsorBoxContent"]/a'))
+                    writeToLog(endTimer(startT) + "\n")
+                elif currDate < dateStr and currDate <> '':
+                    increment = increment + 1
+                    continue
+                else:
+                    startT = startTimer()
+                    writeToLog("Remove Dups from Scrape\n")
+                    writeToLog(len(liData) + " records from scrape\n")
+                    liData = removeDuplicates(liData)
+                    writeToLog(len(liData) + " records after deduplication\n")
+                    writeToLog(endTimer(startT) + "\n")
+                    startT = startTimer()
+                    writeToLog("Create CSV for Scrape\n")
+                    createCSV(liData, scrapeFile)
+                    writeToLog(endTimer(startT) + "\n")
+                    endTime = time.time()
+                    totTime = endTime - startTime
+                    totTime = ("{0:.1f}".format(round(totTime,2)))
+                    writeToLog("It took " + str(totTime) + " seconds to scrape yesterday's pages.\n")
+                    logFile.close()
+                    exit()
                 increment = increment + 1
-                continue
-            else:
-                startT = startTimer()
-                print "Remove Dups from Scrape"
-                liData = removeDuplicates(liData)
-                endTimer(startT)
-                startT = startTimer()
-                print "Create CSV for Scrape"
-                createCSV(liData, scrapeFile)
-                endTimer(startT)
-                endTime = time.time()
-                totTime = endTime - startTime
-                totTime = ("{0:.1f}".format(round(totTime,2)))
-                print "It took " + str(totTime) + " seconds to complete today's pages."
-                exit()
-            increment = increment + 1
+        except:
+            writeToLog("Unexpected error:" + sys.exc_info()[0] + "\n")
+            logFile.close()
 
 mainURL = "http://toronto.backpage.com/"
 main(mainURL)
