@@ -3,7 +3,7 @@
         <head>
                 <meta charset="utf-8">
                 <title>
-                        Screen Scrap
+                        Screen Scrape
                 </title>
                 <style>
                         table {
@@ -19,7 +19,7 @@
         <body>
                 <script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
                 <script type="text/javascript" charset="utf-8">
-                        d3.text("ScreenScrap-Test.csv", "text/csv", function(data) {
+                        d3.text("ScreenScrape-Test.csv", "text/csv", function(data) {
                                 var parsedCSV = d3.csv.parseRows(data);
                                 var container = d3.select("body")
                                 .append("table")
@@ -27,7 +27,7 @@
                                 .data(parsedCSV).enter()
                                 .append("tr")
                                 .selectAll("td")
-								.data(function(d) { return d; }).enter()
+				.data(function(d) { return d; }).enter()
                                 .append("td")
                                 .text(function(d) { return d; });
                         });
