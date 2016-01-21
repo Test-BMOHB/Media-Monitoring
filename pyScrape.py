@@ -187,6 +187,7 @@ def main(mainURL):
     writeToLog("*************************** " + currDate + " ***************************\n")
     with open('/var/www/html/ScreenScrape.csv','w') as scrapeFile:
         try:
+            writeToLog("Main Scrape\n")
             while increment < 1000:
                 writeToLog("Page: " + str(increment) + "\n")
                 if increment == 1:
@@ -204,7 +205,6 @@ def main(mainURL):
 ##  Compare current date to date on webpage
                 if dateStr == currDate:
                     startT = startTimer()
-                    writeToLog("Main Scrape\n")
                     liData.extend(scrapeInfo(mainURL, mainContent, '/html/body/div//*[@href]'))
 ##  Extend liData to include anything from the sponsorBoxContent xPath
                     liData.extend(scrapeInfo(mainURL, mainContent, '//*[@class="sponsorBoxContent"]/a'))
@@ -228,7 +228,7 @@ def main(mainURL):
                     totTime = ("{0:.1f}".format(round(totTime,2)))
                     writeToLog("It took " + str(totTime) + " seconds to scrape yesterday's pages.\n")
                     logFile.close()
-                    exit()
+##                    exit()
                 increment = increment + 1
         except:
             writeToLog("Unexpected error:" + sys.exc_info()[0] + "\n")
