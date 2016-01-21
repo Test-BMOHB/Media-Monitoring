@@ -228,7 +228,6 @@ def main(mainURL):
                     totTime = ("{0:.1f}".format(round(totTime,2)))
                     writeToLog("It took " + str(totTime) + " seconds to scrape yesterday's pages.\n")
                     logFile.close()
-##                    exit()
                 increment = increment + 1
         except:
             writeToLog("Unexpected error:" + sys.exc_info()[0] + "\n")
