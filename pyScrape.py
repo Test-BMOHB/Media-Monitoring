@@ -144,6 +144,14 @@ def writeToCSV(liCSV, writer):
             rowStr = rowStr + ","
         rowStr = rowStr[:-1]
         if write:
+            if rowStr.count(',') > 3:
+                startHTTP = rowStr.index('http')
+                httpStr = rowStr[startHTTP:]
+                endHTTP = httpStr.index(',http')
+                httpStr = httpStr[:endHTTP]
+                start2HTTP = rowStr.index(httpStr)
+                httpStr = '"' + httpStr + '"'
+                rowStr = rowStr[:startHTTP] + httpStr + rowStr[(start2HTTP + len(httpStr)-2):]
             writer.writerow([rowStr])
         else:
             num = list(set(num))
