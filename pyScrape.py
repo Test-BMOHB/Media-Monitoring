@@ -143,15 +143,15 @@ def writeToCSV(liCSV, writer):
                 rowStr = rowStr + n
             rowStr = rowStr + ","
         rowStr = rowStr[:-1]
+        if rowStr.count(',') > 3:
+            startHTTP = rowStr.index('http')
+            httpStr = rowStr[startHTTP:]
+            endHTTP = httpStr.index(',http')
+            httpStr = httpStr[:endHTTP]
+            start2HTTP = rowStr.index(httpStr)
+            httpStr = '"' + httpStr + '"'
+            rowStr = rowStr[:startHTTP] + httpStr + rowStr[(start2HTTP + len(httpStr)-2):]
         if write:
-            if rowStr.count(',') > 3:
-                startHTTP = rowStr.index('http')
-                httpStr = rowStr[startHTTP:]
-                endHTTP = httpStr.index(',http')
-                httpStr = httpStr[:endHTTP]
-                start2HTTP = rowStr.index(httpStr)
-                httpStr = '"' + httpStr + '"'
-                rowStr = rowStr[:startHTTP] + httpStr + rowStr[(start2HTTP + len(httpStr)-2):]
             writer.writerow([rowStr])
         else:
             num = list(set(num))
@@ -162,6 +162,7 @@ def writeToCSV(liCSV, writer):
                 rowStr = ''.join(li) + rowCopy
                 rowCopy2 = rowStr
                 for s in site:
+                    s = '"' + s + '"'
                     lis = [s]
                     r = rowCopy2.split(',')
                     rowStr = r[0] + ',' + ''.join(lis) + ',' + r[2] + ',' + r[3]
