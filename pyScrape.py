@@ -100,6 +100,11 @@ def scrapeInfo(mainURL, mainContent, xPath):
                     number = number.replace('*','')
                     number = number.replace('~','')
                     number = number.replace(',','')
+                    number = number.replace(':','')
+                    number = number.replace(';','')
+                    number = number.replace(']','')
+                    number = number.replace('/','')
+                    number = number.replace('_','')                    
                     if len(number) == 10 or len(number) == 11:
                         phoneNumber.append(number)
 ##  Only grabs HTML 'a' tags
@@ -277,5 +282,5 @@ def main(mainURLList):
             e = traceback.format_exc()
             writeToLog("Unexpected error:" + str(e) + "\n")
 
-mainURLList = ["http://alberta.backpage.com/", "http://britishcolumbia.backpage.com/", "http://manitoba.backpage.com/", "http://newbrunswick.backpage.com/", "http://stjohns.backpage.com/", "http://yellowknife.backpage.com/", "http://halifax.backpage.com/", "http://ontario.backpage.com/", "http://quebec.backpage.com/", "http://saskatchewan.backpage.com/", "http://whitehorse.backpage.com/", "http://illinois.backpage.com/"]
+mainURLList = ["http://alberta.backpage.com/", "http://britishcolumbia.backpage.com/", "http://manitoba.backpage.com/", "http://newbrunswick.backpage.com/", "http://stjohns.backpage.com/", "http://yellowknife.backpage.com/", "http://halifax.backpage.com/", "http://ontario.backpage.com/", "http://quebec.backpage.com/", "http://saskatchewan.backpage.com/", "http://whitehorse.backpage.com/", "http://alabama.backpage.com/", "http://alaska.backpage.com/", "http://arizona.backpage.com/", "http://arkansas.backpage.com/", "http://california.backpage.com/", "http://colorado.backpage.com/", "http://connecticut.backpage.com/", "http://delaware.backpage.com/", "http://florida.backpage.com/", "http://georgia.backpage.com/", "http://hawaii.backpage.com/", "http://idaho.backpage.com/", "http://illinois.backpage.com/", "http://indiana.backpage.com/", "http://iowa.backpage.com/", "http://kansas.backpage.com/", "http://kentucky.backpage.com/", "http://louisiana.backpage.com/", "http://maine.backpage.com/", "http://maryland.backpage.com/", "http://massachusetts.backpage.com/", "http://michigan.backpage.com/", "http://minnesota.backpage.com/", "http://mississippi.backpage.com/", "http://missouri.backpage.com/", "http://montana.backpage.com/", "http://nebraska.backpage.com/", "http://nevada.backpage.com/", "http://newhampshire.backpage.com/", "http://newjersey.backpage.com/", "http://newmexico.backpage.com/", "http://newyork.backpage.com/", "http://northcarolina.backpage.com/", "http://northdakota.backpage.com/", "http://ohio.backpage.com/", "http://oklahoma.backpage.com/", "http://oregon.backpage.com/", "http://pennsylvania.backpage.com/", "http://rhodeisland.backpage.com/", "http://southcarolina.backpage.com/", "http://southdakota.backpage.com/", "http://tennessee.backpage.com/", "http://texas.backpage.com/", "http://utah.backpage.com/", "http://vermont.backpage.com/", "http://virginia.backpage.com/", "http://washington.backpage.com/", "http://washingtondc.backpage.com/", "http://westvirginia.backpage.com/", "http://wisconsin.backpage.com/", "http://wyoming.backpage.com/"]
 main(mainURLList)
