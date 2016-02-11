@@ -183,6 +183,7 @@ def main(mainURLList, category):
         e = traceback.format_exc()
         writeToLog("Unexpected error:" + str(e) + "\n")
 
+## List of adult categories that CL uses
 categories = ["cas","m4m","m4w","msr","w4w","w4m"]
 sourceURL = "http://www.craigslist.org/about/sites#US"
 mainURLList = []
@@ -190,6 +191,7 @@ sourceRequest = requests.get(sourceURL)
 sourceContent = html.fromstring(sourceRequest.content)
 sourceXPath = sourceContent.xpath('//a')
 sourceXPath = list(set(sourceXPath))
+## Create list of all US sites
 for sourceElements in sourceXPath:
     link = sourceElements.get('href')
     if str(link)[:1] <> '#' and link is not None and re.search('www.craigslist.org',link) is None and re.search('forums.craigslist.org',link) is None:
