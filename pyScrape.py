@@ -100,6 +100,11 @@ def scrapeInfo(mainURL, mainContent, xPath):
                     number = number.replace('*','')
                     number = number.replace('~','')
                     number = number.replace(',','')
+                    number = number.replace(':','')
+                    number = number.replace(';','')
+                    number = number.replace(']','')
+                    number = number.replace('/','')
+                    number = number.replace('_','')                    
                     if len(number) == 10 or len(number) == 11:
                         phoneNumber.append(number)
 ##  Only grabs HTML 'a' tags
@@ -143,6 +148,14 @@ def writeToCSV(liCSV, writer):
                 rowStr = rowStr + n
             rowStr = rowStr + ","
         rowStr = rowStr[:-1]
+        if rowStr.count(',') > 3:
+            startHTTP = rowStr.index('http')
+            httpStr = rowStr[startHTTP:]
+            endHTTP = httpStr.index(',http')
+            httpStr = httpStr[:endHTTP]
+            start2HTTP = rowStr.index(httpStr)
+            httpStr = '"' + httpStr + '"'
+            rowStr = rowStr[:startHTTP] + httpStr + rowStr[(start2HTTP + len(httpStr)-2):]
         if write:
             writer.writerow([rowStr])
         else:
@@ -154,6 +167,7 @@ def writeToCSV(liCSV, writer):
                 rowStr = ''.join(li) + rowCopy
                 rowCopy2 = rowStr
                 for s in site:
+                    s = '"' + s + '"'
                     lis = [s]
                     r = rowCopy2.split(',')
                     rowStr = r[0] + ',' + ''.join(lis) + ',' + r[2] + ',' + r[3]
@@ -221,6 +235,7 @@ def main(mainURLList):
                 endPage = 0
                 increment = 1
                 while increment < 1000:
+##  If increment > 1 then add the page string to the URL
                     if increment == 1:
                         mainRequest = requests.get(mainURL + "adult/")
                     else:
@@ -228,6 +243,7 @@ def main(mainURLList):
                     mainContent = html.fromstring(mainRequest.content)
                     date = mainContent.xpath('//*[@class="date"]')
                     dateStr = ''
+##  Loop through dates on the page to make sure that the current date is on the page
                     for dateStr in date:
                         dateStr = tostring(dateStr)
                         dateStr = re.search("\w{3}. \w{3}. \d{1,2}", dateStr)
@@ -236,12 +252,12 @@ def main(mainURLList):
                         dateStr = dateStr.strftime('%Y-%m-%d')
                         if dateStr == currDate:
                             break
-    ##  Compare current date to date on webpage
+##  Compare current date to date on webpage
                     if dateStr == currDate:
                         if startPage == 0:
                             startPage = increment
                         liData.extend(scrapeInfo(mainURL, mainContent, '/html/body/div//*[@href]'))
-    ##  Extend liData to include anything from the sponsorBoxContent xPath
+##  Extend liData to include anything from the sponsorBoxContent xPath
                         liData.extend(scrapeInfo(mainURL, mainContent, '//*[@class="sponsorBoxContent"]/a'))
                     elif currDate < dateStr and currDate <> '':
                         increment = increment + 1
@@ -258,6 +274,7 @@ def main(mainURLList):
                 writeToLog(endTimer(startT) + mainURL + "\n")
                 writeToLog("Write to scrape to CSV\n")
                 writeToCSV(liData, writer)
+##  Sleep for 30 seconds and then request a different page to make it seem like a human is doing the surfing
                 time.sleep(30)
                 requests.get("http://www.google.com")
             endTime = time.time()
@@ -268,5 +285,6 @@ def main(mainURLList):
             e = traceback.format_exc()
             writeToLog("Unexpected error:" + str(e) + "\n")
 
-mainURLList = ["http://alberta.backpage.com/", "http://britishcolumbia.backpage.com/", "http://manitoba.backpage.com/", "http://newbrunswick.backpage.com/", "http://stjohns.backpage.com/", "http://yellowknife.backpage.com/", "http://halifax.backpage.com/", "http://ontario.backpage.com/", "http://quebec.backpage.com/", "http://saskatchewan.backpage.com/", "http://whitehorse.backpage.com/", "http://illinois.backpage.com/"]
+##  List of all Canadian BP links and US links
+mainURLList = ["http://alberta.backpage.com/", "http://britishcolumbia.backpage.com/", "http://manitoba.backpage.com/", "http://newbrunswick.backpage.com/", "http://stjohns.backpage.com/", "http://yellowknife.backpage.com/", "http://halifax.backpage.com/", "http://ontario.backpage.com/", "http://quebec.backpage.com/", "http://saskatchewan.backpage.com/", "http://whitehorse.backpage.com/", "http://alabama.backpage.com/", "http://alaska.backpage.com/", "http://arizona.backpage.com/", "http://arkansas.backpage.com/", "http://california.backpage.com/", "http://colorado.backpage.com/", "http://connecticut.backpage.com/", "http://delaware.backpage.com/", "http://florida.backpage.com/", "http://georgia.backpage.com/", "http://hawaii.backpage.com/", "http://idaho.backpage.com/", "http://illinois.backpage.com/", "http://indiana.backpage.com/", "http://iowa.backpage.com/", "http://kansas.backpage.com/", "http://kentucky.backpage.com/", "http://louisiana.backpage.com/", "http://maine.backpage.com/", "http://maryland.backpage.com/", "http://massachusetts.backpage.com/", "http://michigan.backpage.com/", "http://minnesota.backpage.com/", "http://mississippi.backpage.com/", "http://missouri.backpage.com/", "http://montana.backpage.com/", "http://nebraska.backpage.com/", "http://nevada.backpage.com/", "http://newhampshire.backpage.com/", "http://newjersey.backpage.com/", "http://newmexico.backpage.com/", "http://newyork.backpage.com/", "http://northcarolina.backpage.com/", "http://northdakota.backpage.com/", "http://ohio.backpage.com/", "http://oklahoma.backpage.com/", "http://oregon.backpage.com/", "http://pennsylvania.backpage.com/", "http://rhodeisland.backpage.com/", "http://southcarolina.backpage.com/", "http://southdakota.backpage.com/", "http://tennessee.backpage.com/", "http://texas.backpage.com/", "http://utah.backpage.com/", "http://vermont.backpage.com/", "http://virginia.backpage.com/", "http://washington.backpage.com/", "http://washingtondc.backpage.com/", "http://westvirginia.backpage.com/", "http://wisconsin.backpage.com/", "http://wyoming.backpage.com/"]
 main(mainURLList)

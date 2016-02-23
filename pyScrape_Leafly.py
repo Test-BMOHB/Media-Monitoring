@@ -45,6 +45,7 @@ def scrapeInfo(mainURL, mainContent, mainXPath, paraXPath):
             zipcode = ''.join(filter(None, [i["Zip"]]))
             url = "https:/www.leafly.com/dispensary-info/" + str(i["UrlName"])
             phone = ''.join(filter(None, [i["Phone"]]))
+##  Replace any letters in a phone number to digits
             phone = phone.replace('.','').replace('-','').replace('(','').replace(')','')
             phone = phone.replace('A','2').replace('B','2').replace('C','2')
             phone = phone.replace('D','3').replace('E','3').replace('F','3')
@@ -93,6 +94,7 @@ def createCSV(liCSV, f1):
 ##  Main Function
 def main(mainURL, mainXPath, linkXPath, fileName):
     liData = []
+    print '***********************************************************************\n'
     with open(fileName,'w') as scrapeFile:
         mainRequest = requests.get(mainURL)
         mainContent = html.fromstring(mainRequest.content)
@@ -101,4 +103,4 @@ def main(mainURL, mainXPath, linkXPath, fileName):
         createCSV(liData, scrapeFile)
 
 ##  Run main
-main('https://www.leafly.com/finder', '//*[@class="col-xs-6 col-md-4 spacer-bottom-xs"]', './/script', 'Leafly_Scrape.csv')
+main('https://www.leafly.com/finder', '//*[@class="col-xs-6 col-md-4 spacer-bottom-xs"]', './/script', '/var/www/html/Leafly_Scrape.csv')
