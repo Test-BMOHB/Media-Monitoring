@@ -1,10 +1,10 @@
+##*********************HEADER*********************##
 ##Developer     : Justin Suelflow
 ##Date          : 2/25/2016
 ##Program Name  : pyScrape_Leafly
-##Version #     : 2
 ##Description   : Loop through all Leafly dispensary websites to find phone number, business name
 ##                  address, city, state, zip code, and url of leafly link
-##Python Version: 2.7.10
+##Python Version: 2.7.11
 ##Prereqs Knowledge: Python, HTML, CSS, XPath
 ##Prereqs Hardware: Any computer that has a C++ compiler (libxml2 uses C++)
 ##Prereqs Software: Python, pip
@@ -12,16 +12,27 @@
 ##Static variables: 'setPreloadedResults', 'https://www.leafly.com', 'https:/www.leafly.com/dispensary-info/',
 ##                  header row in CSV, mainURL, mainXPath, paraXPath
 ##-----------------------------------------------------------------------------
-## History  | ddmmyyyy  |  User           |                Changes
-##    1       25022016    Justin Suelflow   Tested version of production code
-##    2       25022016    Justin Suelflow   Added comments to code
+## Version  | mm/dd/yyyy  |  User           |                Changes
+##    1       02/25/2016    Justin Suelflow   Tested version of production code
+##    2       02/25/2016    Justin Suelflow   Added comments to code
+##    3       03/01/2016    Justin Suelflow   Standardized comments
 ##-----------------------------------------------------------------------------
+##*********************END HEADER*********************##
+
+##*********************IMPORT*********************##
 ##  Import needed python libraries
 ##  Libraries must be installed using 'pip install'
+##  pyTimer.py file is found at https://github.com/Test-BMOHB/Media-Monitoring/blob/master/pyTimer.py
 from lxml import html
 from lxml.etree import tostring
-import requests, csv, re, json
-##  Function to scrape info
+import requests, csv, re, json, pyTimer
+##*********************END IMPORT*********************##
+
+##*********************FUNCTIONS*********************##
+##  Function	: scrapeInfo
+##  Description	: Scrapes name, phone number, address, city, state, zip code and url from all links on mainURL
+##  Parameters	: mainURL = string type, mainContent = string type, mainXPath = string type, paraXPath = string type
+##  Returns	: list
 def scrapeInfo(mainURL, mainContent, mainXPath, paraXPath):
     li = []
     mainLinksXPath = mainContent.xpath(mainXPath)
@@ -41,7 +52,7 @@ def scrapeInfo(mainURL, mainContent, mainXPath, paraXPath):
 ##  Use xpath to find the elements in the HTML
         linkXPath = linkContent.xpath(paraXPath)
         finList = []
-        print "Scraping " + link
+        writeToLog("Scraping " + link + "\n")
 ##  Loop through elements in linkXPath
         for linkXElement in linkXPath:
             text = tostring(linkXElement)
@@ -105,20 +116,34 @@ def scrapeInfo(mainURL, mainContent, mainXPath, paraXPath):
                 li.append([name,phone,address,city,state,zipcode,url,link])
     return li
 
-##  Function to remove exact duplicate list entries
+##  Function	: removeDuplicates
+##  Description	: Remove exact duplicate list entries
+##  Parameters	: dedup = list type
+##  Returns	: list
 def removeDuplicates(dedup):
-    print len(dedup)
-    finalList = list(set(dedup))
-##    finalList = []
-##    for x in dedup:
-##        if x not in finalList:
-##            finalList.append(x)
-    print len(finalList)
+    finalList = []
+    for x in dedup:
+        if x not in finalList:
+            finalList.append(x)
     return finalList
 
-##  Function to create the CSV file
+##  Function	: writeToLog
+##  Description	: Write text to log
+##  Parameters	: text = string type
+##  Returns	:
+def writeToLog(text):
+##  Open a log file and append to the end of the log
+    logFile = open('/var/www/html/pylog_Leafly.txt','a')
+    logFile.write(text)
+##  Close log file
+    logFile.close()
+
+##  Function	: createCSV
+##  Description	: Writes list to a CSV file
+##  Parameters	: liCSV = list type, f1 = file type
+##  Returns	:
 def createCSV(liCSV, f1):
-    print "Writing to CSV"
+    writeToLog("Writing to CSV\n")
 ##  Use the ^ as a delimiter because the data on Leafly has lots of other special characters including commas
 ##  Needed to find a special character that was not used by the data
     writer = csv.writer(f1, delimiter='^')
@@ -129,17 +154,21 @@ def createCSV(liCSV, f1):
         rowStr = ''
 ##  Some elements are lists so it is needed to loop through each element again
         for e in i:
-            rowStr = rowStr + str(e)
+	    rowStr = rowStr + str(e)
             rowStr = rowStr + '^'
 ##  Take the last ^ off of the rowStr to finish the row
         rowStr = rowStr[:-1]
 ##  Write the row to the CSV file
         writer.writerow([rowStr])
 
-##  Main Function
+##*********************MAIN FUNCTION*********************##
+##  Function	: main
+##  Description	: Opens file, http request mainURL and call other functions
+##  Parameters	: mainURLList = list type
+##  Returns	:
 def main(mainURL, mainXPath, linkXPath, fileName):
     liData = []
-    print '***********************************************************************\n'
+    writeToLog('***********************************************************************\n')
 ##  Open a file and overwrite the existing file or create a new file if needed
     with open(fileName,'w') as scrapeFile:
 ##  Http request the mainURL
@@ -150,12 +179,26 @@ def main(mainURL, mainXPath, linkXPath, fileName):
 ##  scrapeInfo needs the url, content and 2 xpath variables to call the function
 ##  scrapeInfo returns a list when completed
         liData.extend(scrapeInfo(mainURL, mainContent, mainXPath, linkXPath))
-##  Call function removeDuplicates to print the length of the list before and after deduplication
+##  Call function removeDuplicates
+        beforeDedup = len(liData)
         liData = removeDuplicates(liData)
+        writeToLog(str(len(liData)) + " records of " + str(beforeDedup) + " left after deduplication\n")
 ##  Call createCSV function to write the list data to the scrapeFile
 ##  createCSV needs a list and an open file to run
         createCSV(liData, scrapeFile)
+##*********************END MAIN FUNCTION*********************##
 
-##  Run main
-##  main needs a url, 2 xpaths and a filename to run
-main('https://www.leafly.com/finder', '//*[@class="col-xs-6 col-md-4 spacer-bottom-xs"]', './/script', '/var/www/html/Leafly_Scrape.csv')
+##*********************END FUNCTIONS*********************##
+
+##*********************PROGRAM*********************##
+##  If statement makes this program standalone
+##  Do not need this if statement if another program will be calling above functions
+if __name__ == "__main__":
+##  Create start time
+    startTime = pyTimer.startTimer()
+    main('https://www.leafly.com/finder', '//*[@class="col-xs-6 col-md-4 spacer-bottom-xs"]', './/script', '/var/www/html/Leafly_Scrape.csv')
+##  Find total time in seconds of program run
+    endTime = pyTimer.endTimer(startTime)
+    writeToLog("Program took " + endTime + " to complete.\n")
+
+##*********************END PROGRAM*********************##
