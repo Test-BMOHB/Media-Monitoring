@@ -16,6 +16,7 @@
 ##    1       02/25/2016    Justin Suelflow   Tested version of production code
 ##    2       02/25/2016    Justin Suelflow   Added comments to code
 ##    3       03/01/2016    Justin Suelflow   Standardized comments
+##    4       03/02/2016    Justin Suelflow   Tested in production - standardized file names
 ##-----------------------------------------------------------------------------
 ##*********************END HEADER*********************##
 
@@ -196,7 +197,7 @@ def main(mainURL, mainXPath, linkXPath, fileName):
 if __name__ == "__main__":
 ##  Create start time
     startTime = pyTimer.startTimer()
-    main('https://www.leafly.com/finder', '//*[@class="col-xs-6 col-md-4 spacer-bottom-xs"]', './/script', '/var/www/html/Leafly_Scrape.csv')
+    main('https://www.leafly.com/finder', '//*[@class="col-xs-6 col-md-4 spacer-bottom-xs"]', './/script', '/var/www/html/Leafly_MMJScrape.csv')
 ##  Find total time in seconds of program run
     endTime = pyTimer.endTimer(startTime)
     writeToLog("Program took " + endTime + " to complete.\n")
