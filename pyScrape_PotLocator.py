@@ -13,6 +13,7 @@
 ##-----------------------------------------------------------------------------
 ## Version  | mm/dd/yyyy  |  User           |                Changes
 ##    1       03/01/2016    Justin Suelflow   Initial Draft
+##    2       03/02/2016    Justin Suelflow   Tested in production - standardized file names
 ##-----------------------------------------------------------------------------
 ##*********************IMPORT*********************##
 ##  Import needed python libraries
@@ -168,7 +169,7 @@ if __name__ == "__main__":
     startTime = pyTimer.startTimer()
     writeToLog('***********************************************************************\n')
 ##  Open a file and overwrite the existing file or create a new file if needed
-    with open('/var/www/html/PotLocator_Scrape.csv','w') as scrapeFile:
+    with open('/var/www/html/PotLocator_MMJScrape.csv','w') as scrapeFile:
         writer = csv.writer(scrapeFile, delimiter='^')
 ##  Add a header row to the CSV
         writer.writerow(["Company","PhoneNumber","Address","City","State","ZipCode","Website"])
