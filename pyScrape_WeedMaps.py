@@ -213,7 +213,7 @@ def main(mainURL, mainXPath, linkXPath, fileName):
 if __name__ == "__main__":
 ##  Create start time
     startTime = pyTimer.startTimer()
-    main(['https://weedmaps.com/dispensaries/in/united-states/','https://weedmaps.com/dispensaries/in/canada/'],  '//noscript', './/script','/var/www/html/Dispensaries_US_Scrape.csv')
+    main(['https://weedmaps.com/dispensaries/in/united-states/','https://weedmaps.com/dispensaries/in/canada/'],  '//noscript', './/script','/var/www/html/Weedmaps_Scrape.csv')
 ##  Find total time in seconds of program run
     endTime = pyTimer.endTimer(startTime)
     writeToLog("Program took " + endTime + " to complete.\n")
