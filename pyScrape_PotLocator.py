@@ -8,12 +8,12 @@
 ##Prereqs Knowledge: Python, HTML, CSS, XPath
 ##Prereqs Hardware: Any computer that has a C++ compiler (libxml2 uses C++)
 ##Prereqs Software: Python, pip
-##Python Libraries: LXML, requests, csv, json, re, libxml2, libxslt
+##Python Libraries: LXML, requests, csv, json, re, libxml2, libxslt, datetime
 ##Static variables: 'Data":'
 ##-----------------------------------------------------------------------------
 ## Version  | mm/dd/yyyy  |  User           |                Changes
 ##    1       03/01/2016    Justin Suelflow   Initial Draft
-##    2       03/02/2016    Justin Suelflow   Tested in production - standardized file names
+##    2       03/07/2016    Justin Suelflow   Datestamp file
 ##-----------------------------------------------------------------------------
 ##*********************IMPORT*********************##
 ##  Import needed python libraries
@@ -21,6 +21,7 @@
 ##  pyTimer.py file is found at https://github.com/Test-BMOHB/Media-Monitoring/blob/master/pyTimer.py
 from lxml import html
 from lxml.etree import tostring
+from datetime import datetime
 import requests, csv, re, json, pyTimer
 ##*********************END IMPORT*********************##
 
@@ -169,7 +170,10 @@ if __name__ == "__main__":
     startTime = pyTimer.startTimer()
     writeToLog('***********************************************************************\n')
 ##  Open a file and overwrite the existing file or create a new file if needed
-    with open('/var/www/html/PotLocator_MMJScrape.csv','w') as scrapeFile:
+    currDate = datetime.now()
+    currDate = currDate.strftime('%Y-%m-%d')
+    fileName = '/var/www/html/' + currDate + '_PotLocator_MMJScrape.csv'
+    with open(fileName,'w') as scrapeFile:
         writer = csv.writer(scrapeFile, delimiter='^')
 ##  Add a header row to the CSV
         writer.writerow(["Company","PhoneNumber","Address","City","State","ZipCode","Website"])

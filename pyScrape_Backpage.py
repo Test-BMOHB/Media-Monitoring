@@ -8,7 +8,7 @@
 ##Prereqs Knowledge : Python, HTML, CSS, XPath
 ##Prereqs Hardware  : Any computer that has a C++ compiler (libxml2 uses C++)
 ##Prereqs Software  : Python, pip
-##Python Libraries  : LXML, requests, csv, json, re, libxml2, libxslt
+##Python Libraries  : LXML, requests, csv, json, re, libxml2, libxslt, datetime, time, traceback, sys
 ##Python file       : pyTimer.py file needs to be in same directory as pyScrape.py
 ##Static variables  : '/var/www/html/pylog_Backpage.txt', '/var/www/html/ScreenScrape.csv', "adult/?page=",
 ##                      regex for finding phone numbers, header row, all xpath, and mainURLList
@@ -19,6 +19,7 @@
 ##    3       02/29/2016    Justin Suelflow   Deleted timer functions to import timer python file pyTimer
 ##    4       03/01/2016    Justin Suelflow   Standardized comments, added proper main function call, and
 ##                                              renamed file to pyScrape_Backpage.py to standardize file naming
+##    5       03/07/2016    Justin Suelflow   Datestamp file
 ##-----------------------------------------------------------------------------
 ##*********************END HEADER*********************##
 
@@ -300,7 +301,8 @@ def main(mainURLList):
     currDate = currDate.strftime('%Y-%m-%d')
     writeToLog("*************************** " + currDate + " ***************************\n")
 ##  Open a file and overwrite the existing file or create a new file if needed
-    with open('/var/www/html/ScreenScrape.csv','w') as scrapeFile:
+    fileName = '/var/www/html/' + currDate + '_ScreenScrape.csv'
+    with open(fileName,'w') as scrapeFile:
         writer = csv.writer(scrapeFile, delimiter=',', quoting=csv.QUOTE_NONE, escapechar=' ')
 ##  Add a header row
         writer.writerow(["PhoneNumber","Email_Address","Website","BackPage_Link"])

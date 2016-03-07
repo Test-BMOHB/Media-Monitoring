@@ -8,7 +8,7 @@
 ##Prereqs Knowledge: Python, HTML, CSS, XPath
 ##Prereqs Hardware: Any computer that has a C++ compiler (libxml2 uses C++)
 ##Prereqs Software: Python, pip
-##Python Libraries: LXML, requests, csv, json, re, libxml2, libxslt
+##Python Libraries: LXML, requests, csv, json, re, libxml2, libxslt, datetime
 ##Static variables: 'wmVariables', './/a', '"listings":[{', user agent header,
 ##                  header row in CSV, mainURL, mainXPath, paraXPath
 ##-----------------------------------------------------------------------------
@@ -16,7 +16,7 @@
 ##    1       02/25/2016    Justin Suelflow   Tested version of production code
 ##    2       02/25/2016    Justin Suelflow   Added comments to code
 ##    3       03/01/2016    Justin Suelflow   Standardized comments
-##    4       03/02/2016    Justin Suelflow   Tested in production - standardized file names
+##    4       03/07/2016    Justin Suelflow   Datestamp file
 ##-----------------------------------------------------------------------------
 ##*********************IMPORT*********************##
 ##  Import needed python libraries
@@ -24,6 +24,7 @@
 ##  pyTimer.py file is found at https://github.com/Test-BMOHB/Media-Monitoring/blob/master/pyTimer.py
 from lxml import html
 from lxml.etree import tostring
+from datetime import datetime
 import requests, csv, re, json, pyTimer
 ##*********************END IMPORT*********************##
 
@@ -214,7 +215,10 @@ def main(mainURL, mainXPath, linkXPath, fileName):
 if __name__ == "__main__":
 ##  Create start time
     startTime = pyTimer.startTimer()
-    main(['https://weedmaps.com/dispensaries/in/united-states/','https://weedmaps.com/dispensaries/in/canada/'],  '//noscript', './/script','/var/www/html/Weedmaps_MMJScrape.csv')
+    currDate = datetime.now()
+    currDate = currDate.strftime('%Y-%m-%d')
+    fileName = '/var/www/html/' + currDate + '_Weedmaps_MMJScrape.csv'
+    main(['https://weedmaps.com/dispensaries/in/united-states/','https://weedmaps.com/dispensaries/in/canada/'],  '//noscript', './/script',fileName)
 ##  Find total time in seconds of program run
     endTime = pyTimer.endTimer(startTime)
     writeToLog("Program took " + endTime + " to complete.\n")
