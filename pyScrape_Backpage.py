@@ -20,6 +20,7 @@
 ##    4       03/01/2016    Justin Suelflow   Standardized comments, added proper main function call, and
 ##                                              renamed file to pyScrape_Backpage.py to standardize file naming
 ##    5       03/07/2016    Justin Suelflow   Datestamp file
+##   5.1     03/08/2016    Justin Suelflow   Change datestamp from YYYY-MM-DD to MMDDYYYY
 ##-----------------------------------------------------------------------------
 ##*********************END HEADER*********************##
 
@@ -298,10 +299,11 @@ def main(mainURLList):
     currDate = datetime.now()
 ##  Make currDate Yesterday's date
     currDate = currDate - timedelta(days=1)
+    fileDate = currDate.strftime('%m%d%Y')
     currDate = currDate.strftime('%Y-%m-%d')
     writeToLog("*************************** " + currDate + " ***************************\n")
 ##  Open a file and overwrite the existing file or create a new file if needed
-    fileName = '/var/www/html/' + currDate + '_ScreenScrape.csv'
+    fileName = '/var/www/html/' + fileDate + '_ScreenScrape.csv'
     with open(fileName,'w') as scrapeFile:
         writer = csv.writer(scrapeFile, delimiter=',', quoting=csv.QUOTE_NONE, escapechar=' ')
 ##  Add a header row

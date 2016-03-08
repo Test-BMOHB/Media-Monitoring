@@ -17,6 +17,7 @@
 ##    2       02/25/2016    Justin Suelflow   Added comments to code
 ##    3       03/01/2016    Justin Suelflow   Standardized comments
 ##    4       03/07/2016    Justin Suelflow   Datestamp file
+##   4.1     03/08/2016    Justin Suelflow   Change datestamp from YYYY-MM-DD to MMDDYYYY
 ##-----------------------------------------------------------------------------
 ##*********************IMPORT*********************##
 ##  Import needed python libraries
@@ -216,8 +217,9 @@ if __name__ == "__main__":
 ##  Create start time
     startTime = pyTimer.startTimer()
     currDate = datetime.now()
+    fileDate = currDate.strftime('%m%d%Y')
     currDate = currDate.strftime('%Y-%m-%d')
-    fileName = '/var/www/html/' + currDate + '_Weedmaps_MMJScrape.csv'
+    fileName = '/var/www/html/' + fileDate + '_Weedmaps_MMJScrape.csv'
     main(['https://weedmaps.com/dispensaries/in/united-states/','https://weedmaps.com/dispensaries/in/canada/'],  '//noscript', './/script',fileName)
 ##  Find total time in seconds of program run
     endTime = pyTimer.endTimer(startTime)

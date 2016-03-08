@@ -17,6 +17,7 @@
 ##    2       02/25/2016    Justin Suelflow   Added comments to code
 ##    3       03/01/2016    Justin Suelflow   Standardized comments
 ##    4       03/07/2016    Justin Suelflow   Datestamp file
+##   4.1     03/08/2016    Justin Suelflow   Change datestamp from YYYY-MM-DD to MMDDYYYY
 ##-----------------------------------------------------------------------------
 ##*********************END HEADER*********************##
 
@@ -199,8 +200,9 @@ if __name__ == "__main__":
 ##  Create start time
     startTime = pyTimer.startTimer()
     currDate = datetime.now()
+    fileDate = currDate.strftime('%m%d%Y')
     currDate = currDate.strftime('%Y-%m-%d')
-    fileName = '/var/www/html/' + currDate + '_Leafly_MMJScrape.csv'
+    fileName = '/var/www/html/' + fileDate + '_Leafly_MMJScrape.csv'
     main('https://www.leafly.com/finder', '//*[@class="col-xs-6 col-md-4 spacer-bottom-xs"]', './/script', fileName)
 ##  Find total time in seconds of program run
     endTime = pyTimer.endTimer(startTime)

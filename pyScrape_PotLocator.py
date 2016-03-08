@@ -14,6 +14,7 @@
 ## Version  | mm/dd/yyyy  |  User           |                Changes
 ##    1       03/01/2016    Justin Suelflow   Initial Draft
 ##    2       03/07/2016    Justin Suelflow   Datestamp file
+##   2.1     03/08/2016    Justin Suelflow   Change datestamp from YYYY-MM-DD to MMDDYYYY
 ##-----------------------------------------------------------------------------
 ##*********************IMPORT*********************##
 ##  Import needed python libraries
@@ -171,8 +172,9 @@ if __name__ == "__main__":
     writeToLog('***********************************************************************\n')
 ##  Open a file and overwrite the existing file or create a new file if needed
     currDate = datetime.now()
+    fileDate = currDate.strftime('%m%d%Y')
     currDate = currDate.strftime('%Y-%m-%d')
-    fileName = '/var/www/html/' + currDate + '_PotLocator_MMJScrape.csv'
+    fileName = '/var/www/html/' + fileDate + '_PotLocator_MMJScrape.csv'
     with open(fileName,'w') as scrapeFile:
         writer = csv.writer(scrapeFile, delimiter='^')
 ##  Add a header row to the CSV
