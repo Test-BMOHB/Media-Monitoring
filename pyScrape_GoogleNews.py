@@ -10,13 +10,16 @@
 ##          Unix install command "sudo apt-get install"
 ##Python Libraries: LXML, requests, csv, re, datetime, numpy, nltk (numpy is prereq)
 ##          Unix install python lib command: "sudo pip install"
+##Python file: pyTimer.py
+##Log file: pylog_GoogleNews.txt
+##Run command: sudo python pyScrape_GoogleNews.py
 ##Static variables: '/var/www/html/pylog_GoogleNews.txt'
 ##                  header row in CSV, mainURL, mainXPath, paraXPath
 ##-----------------------------------------------------------------------------
 ## Version  | mm/dd/yyyy  |  User           |                Changes
 ##    1       03/14/2016    Justin Suelflow    Initial Version to grab names from current day
 ##    2       03/15/2016    Justin Suelflow    Added comments
-##   2.1      03/16/2016    Justin Suelflow    Made portable
+##   2.1      03/16/2016    Justin Suelflow    Made portable, added sleep request, added search queries
 ##-----------------------------------------------------------------------------
 ##*********************END HEADER*********************##
 
@@ -179,6 +182,8 @@ def main(mainURL, mainXPath, paraXPath, fileName, queryLi):
                 writeToLog("Extracting Names\n")
                 nameLi.extend(extractNames(htmlLi))
 		increment = increment + 1
+##  Sleep for 30 seconds and then request a different page to make it seem like a human is doing the surfing
+            time.sleep(30)
         writeToLog("Removing Duplicates\n")
         nameLi = removeDuplicates(nameLi)
         writeToLog("Creating CSV\n")
@@ -203,7 +208,17 @@ if __name__ == "__main__":
     fileDate = currDate.strftime('%m%d%Y')
     writeToLog('*****************************' + fileDate + '*****************************')
     fileName = '/var/www/html/' + fileDate + '_GoogleNews_Scrape.csv'
-    queryLi = ['arrest+OR+convicted+OR+guilty+OR+charged+OR+accused+AND~%22money+laundering%22']
+    queryLi = ['arrest+OR+convicted+OR+guilty+OR+charged+OR+accused+AND~%22money+laundering%22',
+               'arrest+OR+convicted+OR+guilty+OR+charged+OR+accused+AND~fraud',
+               'arrest+OR+convicted+OR+guilty+OR+charged+OR+accused+AND~trafficking',
+               'arrest%21+OR+charge%21+OR+accuse%21+OR+guilty+OR+convicted+AND+terror%21',
+               'arrest%21+OR+charge%21+OR+accuse%21+OR+guilty+OR+convicted+AND+%22tax+evasion%22',
+               'arrest%21+OR+charge%21+OR+accuse%21+OR+guilty+OR+convicted+AND+%22child+pornography%22',
+               'arrest%21+OR+charge%21+OR+accuse%21+OR+guilty+OR+convicted+AND+bribe%21',
+               'arrest%21+OR+charge%21+OR+accuse%21+OR+guilty+OR+convicted+AND+corruption',
+               'arrest%21+OR+charge%21+OR+accuse%21+OR+guilty+OR+convicted+AND+embezzle%21',
+               'arrest%21+OR+charge%21+OR+accuse%21+OR+guilty+OR+convicted+AND+%22proceeds+of+crime%22',
+               'arrest%21+OR+charge%21+OR+accuse%21+OR+guilty+OR+convicted+AND+%22drug+bust%22']
     mainURL = 'https://www.google.ca/search?tbm=nws&source=lnt&tbs=sbd:1&q='
     mainXPath = '//*[@class="g"]'
     paraXPath = '//p'
