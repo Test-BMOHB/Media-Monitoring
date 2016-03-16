@@ -5,15 +5,18 @@
 ##Description   : Loop through current day's articles on Google News to pull names from articles
 ##Python Version: 2.7.11
 ##Prereqs Knowledge: Python, HTML, CSS, XPath
-##Prereqs Hardware: Any computer that has a C++ compiler (libxml2 uses C++)
+##Prereqs Hardware: 
 ##Prereqs Software: Python, pip, Python-Dev
-##Python Libraries: LXML, requests, csv, re, libxml2, libxslt, datetime, nltk, numpy
+##          Unix install command "sudo apt-get install"
+##Python Libraries: LXML, requests, csv, re, datetime, numpy, nltk (numpy is prereq)
+##          Unix install python lib command: "sudo pip install"
 ##Static variables: '/var/www/html/pylog_GoogleNews.txt'
 ##                  header row in CSV, mainURL, mainXPath, paraXPath
 ##-----------------------------------------------------------------------------
 ## Version  | mm/dd/yyyy  |  User           |                Changes
 ##    1       03/14/2016    Justin Suelflow    Initial Version to grab names from current day
 ##    2       03/15/2016    Justin Suelflow    Added comments
+##   2.1      03/16/2016    Justin Suelflow    Made portable
 ##-----------------------------------------------------------------------------
 ##*********************END HEADER*********************##
 
@@ -80,7 +83,7 @@ def createCSV(liCSV, f1):
 def scrapeInfo(mainContent, mainXPath, paraXPath):
     li = []
     currDate = datetime.now()
-    ##  Make currDate 7 day's ago date
+##  Make currDate 7 day's ago date
     currDate = currDate - timedelta(days=7)
     currDate = currDate.strftime('%b %d, %Y')
     currDate = time.strptime(currDate, "%b %d, %Y")
@@ -137,7 +140,6 @@ def extractNames(li):
                     if(len(' '.join(e for e in chunk[0] if e.isalnum())) > 2):
                         smLi.append([index, chunk, a[1]])
             finList.append(smLi)
-
     nameLi = []
     for f in finList:
         if len(f) > 0:
@@ -192,6 +194,11 @@ def main(mainURL, mainXPath, paraXPath, fileName, queryLi):
 if __name__ == "__main__":
 ##  Create start time
     startTime = pyTimer.startTimer()
+    try:
+        punktDL = nltk.download('punkt')
+        aptDL = nltk.download('averaged_perceptron_tagger')
+    except:
+        writeToLog('NLTK Punkt and Averaged_Perceptron_tagger need to be installed')
     currDate = datetime.now()
     fileDate = currDate.strftime('%m%d%Y')
     writeToLog('*****************************' + fileDate + '*****************************')
@@ -200,7 +207,11 @@ if __name__ == "__main__":
     mainURL = 'https://www.google.ca/search?tbm=nws&source=lnt&tbs=sbd:1&q='
     mainXPath = '//*[@class="g"]'
     paraXPath = '//p'
-    main(mainURL, mainXPath, paraXPath, fileName, queryLi)
+    if punktDL and aptDL:
+        main(mainURL, mainXPath, paraXPath, fileName, queryLi)
+    else:
+        writeToLog('NLTK Punkt and Averaged_Perceptron_tagger need to be downloaded first.')
+        writeToLog('Please sudo python and run nltk.download("punkt") and nltk.download("averaged_perceptron_tagger")')
 ##  Find total time in seconds of program run
     endTime = pyTimer.endTimer(startTime)
     writeToLog("Program took " + endTime + " to complete.\n")
