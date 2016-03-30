@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="robots" content="noindex">
+		<meta name="googlebot" content="noindex">
+		<title>
+			Leafly
+		</title>
+		<style>
+			table {
+				border-collapse: collapse;
+				border: 2px black solid;
+			}
+			td {
+				border: 1px black solid;
+				padding: 5px;
+			}
+		</style>
+	</head>
+	<body>
+		<a href="/Current/Leafly_MMJScrape.csv" id="File">Leafly_MMJScrape.csv</a>
+		<script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
+		<script type="text/javascript" charset="utf-8">
+			d3.text("/Current/Leafly_MMJScrape.csv", function(data) {
+				var parsedCSV = d3.dsv("^", "text/plain").parse(data);
+				var header = ["Company", "PhoneNumber", "Address", "City", "State", "ZipCode", "Website", "Link"];
+				var table = d3.select("body").append("table");
+				var th = table.append("tr")
+					.selectAll("th").data(header).enter()
+					.append("th")
+					.text(function(column) { return column; });
+				var tr = table.selectAll("tr").data(parsedCSV).enter().append("tr");
+				tr.append("td").text(function(d) { return d.Company; });
+				tr.append("td").text(function(d) { return d.PhoneNumber; });
+				tr.append("td").text(function(d) { return d.Address; });
+				tr.append("td").text(function(d) { return d.City; });
+				tr.append("td").text(function(d) { return d.State; });
+				tr.append("td").text(function(d) { return d.ZipCode; });
+				tr.append("td")
+					.append("a")
+					.attr("href", function(d) { return d.Website; })
+					.text(function(d) { return d.Website; });
+				tr.append("td")
+					.append("a")
+					.attr("href", function(d) { return d.Link; })
+					.text(function(d) { return d.Link; });
+			});
+		</script>
+	</body>
+</html>
