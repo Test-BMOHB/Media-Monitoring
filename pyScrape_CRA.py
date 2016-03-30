@@ -86,48 +86,48 @@ def scrapeInfo(mainContent, mainXPath, linkXPath, paraXPath):
     li = []
     mainLinksXPath = mainContent.xpath(mainXPath)
     mainLinksXPath = list(set(mainLinksXPath))
-for mainLinksElements in mainLinksXPath:
-    link = tostring(mainLinksElements)
-    link = html.fromstring(link)
-    link = link.xpath('//a')
-    for i in link:
-        i = i.get('href')
-        if 'http' not in i:
-            i = 'http://www.cra-arc.gc.ca' + i
+    for mainLinksElements in mainLinksXPath:
+        link = tostring(mainLinksElements)
+        link = html.fromstring(link)
+        link = link.xpath('//a')
+        for i in link:
+            i = i.get('href')
+            if 'http' not in i:
+                i = 'http://www.cra-arc.gc.ca' + i
 ##  Do a HTTP request on the article link
-        linkRequest = requests.get(i)
-##        writeToLog("Gathering Names from: " + i + "\n")
-        linkContent = html.fromstring(linkRequest.content)
+            linkRequest = requests.get(i)
+            linkContent = html.fromstring(linkRequest.content)
 ##  Find the paraXpath in the article
-        lXPath = linkContent.xpath(linkXPath)
-        for linkXElement in lXPath:
-            text = tostring(linkXElement)
-            text = html.fromstring(text)
-            text = text.xpath('//a')
-            for a in text:
-                a = tostring(a)
-                a = html.fromstring(a)
-                a = a.get('href')
-                a = 'http://www.cra-arc.gc.ca' + a
-                aRequest = requests.get(a)
-                aContent = html.fromstring(aRequest.content)
-                aXPath = aContent.xpath(paraXPath)
-                pageContent = ''
-                for x in aXPath:
-                    x = tostring(x)
+            lXPath = linkContent.xpath(linkXPath)
+            for linkXElement in lXPath:
+                text = tostring(linkXElement)
+                text = html.fromstring(text)
+                text = text.xpath('//a')
+                for a in text:
+                    a = tostring(a)
+                    a = html.fromstring(a)
+                    a = a.get('href')
+                    a = 'http://www.cra-arc.gc.ca' + a
+                    aRequest = requests.get(a)
+                    aContent = html.fromstring(aRequest.content)
+                    aXPath = aContent.xpath(paraXPath)
+                    pageContent = ''
+                    writeToLog("Gathering Names from: " + a + "\n")
+                    for x in aXPath:
+                        x = tostring(x)
 ##  Delete all icons and small emojis from HTML text
-                    icons = re.findall(r'&#\d*;', x)
-                    icons = list(set(icons))
-                    for icon in icons:
-                        x = re.sub(icon, '', x)
+                        icons = re.findall(r'&#\d*;', x)
+                        icons = list(set(icons))
+                        for icon in icons:
+                            x = re.sub(icon, '', x)
 ##  Delete all HTML tags from HTML text
-                    tags = re.findall('<[^>]+>', x)
-                    tags = list(set(tags))
-                    for tag in tags:
-                        x = x.replace(tag, '')
-                    pageContent = pageContent + x
+                        tags = re.findall('<[^>]+>', x)
+                        tags = list(set(tags))
+                        for tag in tags:
+                            x = x.replace(tag, '')
+                        pageContent = pageContent + x
 ##  Add HTML content and the article link to a list
-                li.append([pageContent,a])
+                    li.append([pageContent,a])
     return li
 
 ##  Function	: extractNames
