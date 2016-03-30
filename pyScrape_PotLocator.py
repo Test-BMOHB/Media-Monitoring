@@ -14,7 +14,8 @@
 ## Version  | mm/dd/yyyy  |  User           |                Changes
 ##    1       03/01/2016    Justin Suelflow   Initial Draft
 ##    2       03/07/2016    Justin Suelflow   Datestamp file
-##   2.1     03/08/2016    Justin Suelflow   Change datestamp from YYYY-MM-DD to MMDDYYYY
+##   2.1      03/08/2016    Justin Suelflow   Change datestamp from YYYY-MM-DD to MMDDYYYY
+##   2.2      03/30/2016    Justin Suelflow   Updated CSV writer to take out quotes
 ##-----------------------------------------------------------------------------
 ##*********************IMPORT*********************##
 ##  Import needed python libraries
@@ -176,7 +177,7 @@ if __name__ == "__main__":
     currDate = currDate.strftime('%Y-%m-%d')
     fileName = '/var/www/html/' + fileDate + '_PotLocator_MMJScrape.csv'
     with open(fileName,'w') as scrapeFile:
-        writer = csv.writer(scrapeFile, delimiter='^')
+        writer = csv.writer(scrapeFile, delimiter='^', quoting=csv.QUOTE_NONE, escapechar=' ')
 ##  Add a header row to the CSV
         writer.writerow(["Company","PhoneNumber","Address","City","State","ZipCode","Website"])
 ##  Create list of locations to search

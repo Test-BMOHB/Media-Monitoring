@@ -19,6 +19,7 @@
 ##-----------------------------------------------------------------------------
 ## Version  | mm/dd/yyyy  |  User           |                Changes
 ##    1       03/28/2016    Justin Suelflow    Initial Version to grab names from articles
+##    1.1     03/30/2016    Justin Suelflow    Updated CSV writer to take out quotes
 ##-----------------------------------------------------------------------------
 ##*********************END HEADER*********************##
 
@@ -63,7 +64,7 @@ def writeToLog(text):
 def createCSV(liCSV, f1):
     writeToLog("Writing to CSV\n")
 ##  Use the comma as a delimiter
-    writer = csv.writer(f1, delimiter=',')
+    writer = csv.writer(f1, delimiter=',', quoting=csv.QUOTE_NONE, escapechar=' ')
 ##  Add a header row to the CSV
     writer.writerow(["Name","Link"])
 ##  Loop through all elements in the list

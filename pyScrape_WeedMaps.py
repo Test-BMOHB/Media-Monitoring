@@ -17,7 +17,8 @@
 ##    2       02/25/2016    Justin Suelflow   Added comments to code
 ##    3       03/01/2016    Justin Suelflow   Standardized comments
 ##    4       03/07/2016    Justin Suelflow   Datestamp file
-##   4.1     03/08/2016    Justin Suelflow   Change datestamp from YYYY-MM-DD to MMDDYYYY
+##   4.1      03/08/2016    Justin Suelflow   Change datestamp from YYYY-MM-DD to MMDDYYYY
+##   4.2      03/30/2016    Justin Suelflow   Updated CSV writer to take out quotes
 ##-----------------------------------------------------------------------------
 ##*********************IMPORT*********************##
 ##  Import needed python libraries
@@ -152,7 +153,7 @@ def createCSV(liCSV, f1):
     writeToLog("Writing to CSV\n")
 ##  Use the ^ as a delimiter because the data on WeedMaps has lots of other special characters including commas
 ##  Needed to find a special character that was not used by the data
-    writer = csv.writer(f1, delimiter='^')
+    writer = csv.writer(f1, delimiter='^', quoting=csv.QUOTE_NONE, escapechar=' ')
 ##  Add a header row to the CSV
     writer.writerow(["Company","PhoneNumber","Address","City","State","ZipCode","Website"])
 ##  Loop through all elements in the list
