@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="robots" content="noindex">
+		<meta name="googlebot" content="noindex">
+		<title>
+			Montreal Gazette
+		</title>
+		<style>
+			table {
+				border-collapse: collapse;
+				border: 2px black solid;
+			}
+			td {
+				border: 1px black solid;
+				padding: 5px;
+			}
+		</style>
+	</head>
+	<body>
+		<a href="/Current/MontrealGazette_Scrape.csv" id="File">MontrealGazette_Scrape.csv</a>
+		<script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
+		<script type="text/javascript" charset="utf-8">
+			d3.text("/Current/MontrealGazette_Scrape.csv", function(data) {
+				var parsedCSV = d3.csv.parse(data)
+				var header = ["Name", "Link"];
+				var table = d3.select("body").append("table");
+				var th = table.append("tr")
+					.selectAll("th").data(header).enter()
+					.append("th")
+					.text(function(column) { return column; });
+				var tr = table.selectAll("tr").data(parsedCSV).enter().append("tr");
+				tr.append("td").text(function(d) { return d.Name; });
+				tr.append("td")
+					.append("a")
+					.attr("href", function(d) { return d.Link; })
+					.text(function(d) { return d.Link; });
+			});
+		</script>
+	</body>
+</html>
