@@ -1,8 +1,8 @@
 ##*********************HEADER*********************##
 ##Developer     : Justin Suelflow
-##Date          : 3/15/2016
-##Program Name  : pyScrape_GoogleNews
-##Description   : Loop through last 7 days worth of articles on 9 pages of Google News to pull names from articles
+##Date          : 4/11/2016
+##Program Name  : pyScrape_OttawaCitizen
+##Description   : Loop through last 7 days worth of articles on 9 pages of Google News to pull names
 ##Python Version: 2.7.11
 ##Prereqs Knowledge: Python, HTML, CSS, XPath
 ##Prereqs Hardware: 
@@ -12,20 +12,15 @@
 ##          Unix install python lib command: "sudo pip install"
 ##Needed Python file: pyTimer.py
 ##          pyTimer.py file is found at https://github.com/Test-BMOHB/Media-Monitoring/blob/master/pyTimer.py
-##Log file saved at: /var/www/html/Logs/pylog_GoogleNews.txt
-##CSV file saved at: /var/www/html/mmddyyyy_GoogleNews_Scrape.csv
-##Run command: sudo python pyScrape_GoogleNews.py
-##Static variables: '/var/www/html/Logs/pylog_GoogleNews.txt'
+##Log file saved at: /var/www/html/Logs/pylog_OttawaCitizen.txt
+##CSV file saved at: /var/www/html/mmddyyyy_OttawaCitizen_Scrape.csv
+##Run command: sudo python pyScrape_OttawaCitizen.py
+##Static variables: '/var/www/html/Logs/pylog_OttawaCitizen.txt'
 ##                  header row in CSV, mainURL, mainXPath, paraXPath
 ##-----------------------------------------------------------------------------
 ## Version  | mm/dd/yyyy  |  User           |                Changes
-##    1       03/14/2016    Justin Suelflow    Initial Version to grab names from current day
-##    2       03/15/2016    Justin Suelflow    Added comments
-##   2.1      03/16/2016    Justin Suelflow    Made portable, added sleep request, added search queries
-##    3       03/30/2016    Justin Suelflow    Added code to delete HTML syntax from text
-##   3.1      03/31/2016    Justin Suelflow    Added try/catch to link scrape to continue scraping instead of exitin
-##                                              Added filename var to send to pyTimer
-##   3.2      04/11/2016    Justin Suelflow    Changed log file path
+##    1       04/11/2016    Justin Suelflow    Initial Version to grab names from current day
+##   1.1      04/11/2016    Justin Suelflow    Changed log file path
 ##-----------------------------------------------------------------------------
 ##*********************END HEADER*********************##
 
@@ -56,7 +51,7 @@ def removeDuplicates(dedup):
 ##  Returns	:
 def writeToLog(text):
 ##  Open a log file and append to the end of the log
-    logFile = open('/var/www/html/Logs/pylog_GoogleNews.txt','a')
+    logFile = open('/var/www/html/Logs/pylog_OttawaCitizen.txt','a')
     logFile.write(text)
 ##  Close log file
     logFile.close()
@@ -250,20 +245,10 @@ if __name__ == "__main__":
     currDate = datetime.now()
     fileDate = currDate.strftime('%m%d%Y')
     writeToLog('*****************************' + fileDate + '*****************************\n')
-    fileName = '/var/www/html/' + fileDate + '_GoogleNews_Scrape.csv'
+    fileName = '/var/www/html/' + fileDate + '_OttawaCitizen_Scrape.csv'
 ##  Declare list of search queries
-    queryLi = ['arrest+OR+convicted+OR+guilty+OR+charged+OR+accused+AND~%22money+laundering%22',
-               'arrest+OR+convicted+OR+guilty+OR+charged+OR+accused+AND~fraud',
-               'arrest+OR+convicted+OR+guilty+OR+charged+OR+accused+AND~trafficking',
-               'arrest%21+OR+charge%21+OR+accuse%21+OR+guilty+OR+convicted+AND+terror%21',
-               'arrest%21+OR+charge%21+OR+accuse%21+OR+guilty+OR+convicted+AND+%22tax+evasion%22',
-               'arrest%21+OR+charge%21+OR+accuse%21+OR+guilty+OR+convicted+AND+%22child+pornography%22',
-               'arrest%21+OR+charge%21+OR+accuse%21+OR+guilty+OR+convicted+AND+bribe%21',
-               'arrest%21+OR+charge%21+OR+accuse%21+OR+guilty+OR+convicted+AND+corruption',
-               'arrest%21+OR+charge%21+OR+accuse%21+OR+guilty+OR+convicted+AND+embezzle%21',
-               'arrest%21+OR+charge%21+OR+accuse%21+OR+guilty+OR+convicted+AND+%22proceeds+of+crime%22',
-               'arrest%21+OR+charge%21+OR+accuse%21+OR+guilty+OR+convicted+AND+%22drug+bust%22']
-    mainURL = 'https://www.google.ca/search?tbm=nws&source=lnt&tbs=sbd:1&q='
+    queryLi = ['money+laundering', 'lawsuit', 'scandal', 'fraud', 'illegal', 'criminal', 'crime', 'conviction', 'guilt', 'arrest', 'testify', 'corrupt', 'accused', 'kickback', 'investigate', 'investigation', 'bribe', 'grow-op', 'unethical', 'ponzi', 'terrorist', 'terrorism']
+    mainURL = 'https://www.google.com/search?source=lnms&tbm=nws&tbs=qdr:w,sbd:1&q=site:www.ottawacitizen.com+'
     mainXPath = '//*[@class="g"]'
     paraXPath = '//p'
 ## If the NLTK packages are downloaded, run the main program

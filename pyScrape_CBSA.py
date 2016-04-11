@@ -8,17 +8,19 @@
 ##Prereqs Hardware: 
 ##Prereqs Software: Python, pip, Python-Dev
 ##          Unix install command "sudo apt-get install"
-##Python Libraries: LXML, requests, csv, re, datetime, numpy, nltk (numpy is prereq)
+##Python Libraries: LXML, requests, csv, re, datetime, os, numpy, nltk (numpy is prereq)
 ##          Unix install python lib command: "sudo pip install"
 ##Python file: pyTimer.py
 ##Log file: pylog_GoogleNews.txt
 ##Run command: sudo python pyScrape_CBSA.py
-##Static variables: '/var/www/html/pylog_CBSA.txt'
+##Static variables: '/var/www/html/Logs/pylog_CBSA.txt'
 ##                  header row in CSV, mainURL, mainXPath, paraXPath
 ##-----------------------------------------------------------------------------
 ## Version  | mm/dd/yyyy  |  User           |                Changes
 ##    1       03/18/2016    Ivana Donevska	Copy py_Scrape_GoogleNews from Justin and make updates
 ##   1.1      03/30/2016    Justin Suelflow     Updated CSV writer to take out quotes
+##   1.2      03/31/2016    Justin Suelflow     Added filename var to send to pyTimer
+##   1.3      04/11/2016    Justin Suelflow     Changed log file path
 ##-----------------------------------------------------------------------------
 ##*********************END HEADER*********************##
 
@@ -29,7 +31,7 @@
 from lxml import html
 from lxml.etree import tostring
 from datetime import datetime, timedelta
-import requests, csv, re, time, nltk, numpy, pyTimer
+import requests, csv, re, time, nltk, numpy, pyTimer, os.path
 ##*********************END IMPORT*********************##
 
 ##*********************FUNCTIONS*********************##
@@ -50,7 +52,7 @@ def removeDuplicates(dedup):
 ##  Returns	:
 def writeToLog(text):
 ##  Open a log file and append to the end of the log
-    logFile = open('/var/www/html/pylog_CBSA.txt','a')
+    logFile = open('/var/www/html/Logs/pylog_CBSA.txt','a')
     logFile.write(text)
 ##  Close log file
     logFile.close()
@@ -196,6 +198,7 @@ if __name__ == "__main__":
         writeToLog('NLTK Punkt and Averaged_Perceptron_tagger need to be downloaded first.')
         writeToLog('Please sudo python and run nltk.download("punkt") and nltk.download("averaged_perceptron_tagger")')
 ##  Find total time in seconds of program run
-    endTime = pyTimer.endTimer(startTime)
+    pName = os.path.basename(__file__)
+    endTime = pyTimer.endTimer(startTime, pName)
     writeToLog("Program took " + endTime + " to complete.\n")
 ##*********************END PROGRAM*********************##

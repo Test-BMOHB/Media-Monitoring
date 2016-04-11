@@ -8,18 +8,20 @@
 ##Prereqs Hardware: 
 ##Prereqs Software: Python, pip, Python-Dev
 ##          Unix install command "sudo apt-get install"
-##Python Libraries: LXML, requests, csv, re, datetime, numpy, nltk (numpy is prereq for nltk)
+##Python Libraries: LXML, requests, csv, re, datetime, numpy, os, nltk (numpy is prereq for nltk)
 ##          Unix install python lib command: "sudo pip install"
 ##Needed Python file: pyTimer.py
 ##          pyTimer.py file is found at https://github.com/Test-BMOHB/Media-Monitoring/blob/master/pyTimer.py
-##Log file saved at: /var/www/html/pylog_CRA.txt
+##Log file saved at: /var/www/html/Logs/pylog_CRA.txt
 ##CSV file saved at: /var/www/html/mmddyyyy_CRA_Scrape.csv
 ##Run command: sudo python pyScrape_CRA.py
 ##Static variables: header row in CSV, mainURL, mainXPath, paraXPath
 ##-----------------------------------------------------------------------------
 ## Version  | mm/dd/yyyy  |  User           |                Changes
 ##    1       03/28/2016    Justin Suelflow    Initial Version to grab names from articles
-##    1.1     03/30/2016    Justin Suelflow    Updated CSV writer to take out quotes
+##   1.1      03/30/2016    Justin Suelflow    Updated CSV writer to take out quotes
+##   1.2      03/31/2016    Justin Suelflow    Added filename var to send to pyTimer
+##   1.3      04/11/2016    Justin Suelflow    Changed log file path
 ##-----------------------------------------------------------------------------
 ##*********************END HEADER*********************##
 
@@ -30,7 +32,7 @@
 from lxml import html
 from lxml.etree import tostring
 from datetime import datetime, timedelta
-import requests, csv, re, time, nltk, numpy, pyTimer
+import requests, csv, re, time, nltk, numpy, pyTimer, os.path
 ##*********************END IMPORT*********************##
 
 ##*********************FUNCTIONS*********************##
@@ -52,7 +54,7 @@ def removeDuplicates(dedup):
 def writeToLog(text):
 ##  Open a log file and append to the end of the log
 ##  If no log file is in directory, this will automatically create it
-    logFile = open('/var/www/html/pylog_CRA.txt','a')
+    logFile = open('/var/www/html/Logs/pylog_CRA.txt','a')
     logFile.write(text)
 ##  Close log file
     logFile.close()
@@ -223,6 +225,7 @@ if __name__ == "__main__":
         writeToLog('NLTK Punkt and Averaged_Perceptron_tagger need to be downloaded first.')
         writeToLog('Please sudo python and run nltk.download("punkt") and nltk.download("averaged_perceptron_tagger")')
 ##  Find total time in seconds of program run
-    endTime = pyTimer.endTimer(startTime)
+    pName = os.path.basename(__file__)
+    endTime = pyTimer.endTimer(startTime, pName)
     writeToLog("Program took " + endTime + " to complete.\n")
 ##*********************END PROGRAM*********************##

@@ -8,7 +8,7 @@
 ##Prereqs Knowledge: Python, HTML, CSS, XPath
 ##Prereqs Hardware: Any computer that has a C++ compiler (libxml2 uses C++)
 ##Prereqs Software: Python, pip
-##Python Libraries: LXML, requests, csv, json, re, libxml2, libxslt, datetime
+##Python Libraries: LXML, requests, csv, json, re, os, libxml2, libxslt, datetime
 ##Static variables: 'Data":'
 ##-----------------------------------------------------------------------------
 ## Version  | mm/dd/yyyy  |  User           |                Changes
@@ -16,6 +16,8 @@
 ##    2       03/07/2016    Justin Suelflow   Datestamp file
 ##   2.1      03/08/2016    Justin Suelflow   Change datestamp from YYYY-MM-DD to MMDDYYYY
 ##   2.2      03/30/2016    Justin Suelflow   Updated CSV writer to take out quotes
+##   2.3      03/31/2016    Justin Suelflow   Added filename var to send to pyTimer
+##   2.4      04/11/2016    Justin Suelflow   Changed log file path
 ##-----------------------------------------------------------------------------
 ##*********************IMPORT*********************##
 ##  Import needed python libraries
@@ -24,7 +26,7 @@
 from lxml import html
 from lxml.etree import tostring
 from datetime import datetime
-import requests, csv, re, json, pyTimer
+import requests, csv, re, json, pyTimer, os.path
 ##*********************END IMPORT*********************##
 
 ##*********************FUNCTIONS*********************##
@@ -139,7 +141,7 @@ def createCSV(liCSV):
 ##  Returns	: 
 def writeToLog(text):
 ##  Open a log file and append to the end of the log
-    logFile = open('/var/www/html/pylog_PotLocator.txt','a')
+    logFile = open('/var/www/html/Logs/pylog_PotLocator.txt','a')
     logFile.write(text)
 ##  Close log file
     logFile.close()
@@ -187,7 +189,8 @@ if __name__ == "__main__":
             mainRequest = requests.post('https://www.potlocator.com/api/searchMarkers', data={'excludeIDs':'','business_type_id':0,'search_key':loc})
             main(mainRequest, loc)
 ##  Find total time in seconds of program run
-    endTime = pyTimer.endTimer(startTime)
+    pName = os.path.basename(__file__)
+    endTime = pyTimer.endTimer(startTime, pName)
     writeToLog("Program took " + endTime + " to complete.\n")
 
 ##*********************END PROGRAM*********************##

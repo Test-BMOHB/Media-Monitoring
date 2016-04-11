@@ -8,9 +8,9 @@
 ##Prereqs Knowledge : Python, HTML, CSS, XPath
 ##Prereqs Hardware  : Any computer that has a C++ compiler (libxml2 uses C++)
 ##Prereqs Software  : Python, pip
-##Python Libraries  : LXML, requests, csv, json, re, libxml2, libxslt, datetime, time, traceback, sys
+##Python Libraries  : LXML, requests, csv, json, re, libxml2, libxslt, os, datetime, time, traceback, sys
 ##Python file       : pyTimer.py file needs to be in same directory as pyScrape.py
-##Static variables  : '/var/www/html/pylog_Backpage.txt', '/var/www/html/ScreenScrape.csv', "adult/?page=",
+##Static variables  : '/var/www/html/Logs/pylog_Backpage.txt', '/var/www/html/ScreenScrape.csv', "adult/?page=",
 ##                      regex for finding phone numbers, header row, all xpath, and mainURLList
 ##-----------------------------------------------------------------------------
 ## Version  | mm/dd/yyyy  |  User           |                Changes
@@ -20,7 +20,9 @@
 ##    4       03/01/2016    Justin Suelflow   Standardized comments, added proper main function call, and
 ##                                              renamed file to pyScrape_Backpage.py to standardize file naming
 ##    5       03/07/2016    Justin Suelflow   Datestamp file
-##   5.1     03/08/2016    Justin Suelflow   Change datestamp from YYYY-MM-DD to MMDDYYYY
+##   5.1      03/08/2016    Justin Suelflow   Change datestamp from YYYY-MM-DD to MMDDYYYY
+##   5.2      03/31/2016    Justin Suelflow   Added filename var to send to pyTimer
+##   5.3      04/11/2016    Justin Suelflow   Changed log file path
 ##-----------------------------------------------------------------------------
 ##*********************END HEADER*********************##
 
@@ -31,7 +33,7 @@
 from lxml import html
 from lxml.etree import tostring
 from datetime import datetime, timedelta
-import requests, csv, re, time, traceback, sys, pyTimer
+import requests, csv, re, time, traceback, sys, pyTimer, os.path
 ##*********************END IMPORT*********************##
 
 ##*********************FUNCTIONS*********************##
@@ -285,7 +287,7 @@ def removeDuplicates(dedup):
 ##  Returns	:
 def writeToLog(text):
 ##  Open a log file and append to the end of the log
-    logFile = open('/var/www/html/pylog_Backpage.txt','a')
+    logFile = open('/var/www/html/Logs/pylog_Backpage.txt','a')
     logFile.write(text)
 ##  Close log file
     logFile.close()
@@ -361,7 +363,8 @@ def main(mainURLList):
                         writeToLog(str(len(liData)) + " records of " + str(beforeDedup) + " left after deduplication\n")
                         break
                     increment = increment + 1
-                writeToLog(pyTimer.endTimer(startT) + mainURL + "\n")
+		pName = os.path.basename(__file__)
+                writeToLog(pyTimer.endTimer(startT, pName) + mainURL + "\n")
                 writeToLog("Write to scrape to CSV\n")
 ##  Call createCSV function to write the list data to the scrapeFile
 ##  createCSV needs a list and a writer from the open file to run
@@ -386,6 +389,7 @@ if __name__ == "__main__":
     mainURLList = ["http://alberta.backpage.com/", "http://britishcolumbia.backpage.com/", "http://manitoba.backpage.com/", "http://newbrunswick.backpage.com/", "http://stjohns.backpage.com/", "http://yellowknife.backpage.com/", "http://halifax.backpage.com/", "http://ontario.backpage.com/", "http://quebec.backpage.com/", "http://saskatchewan.backpage.com/", "http://whitehorse.backpage.com/", "http://alabama.backpage.com/", "http://alaska.backpage.com/", "http://arizona.backpage.com/", "http://arkansas.backpage.com/", "http://california.backpage.com/", "http://colorado.backpage.com/", "http://connecticut.backpage.com/", "http://delaware.backpage.com/", "http://florida.backpage.com/", "http://georgia.backpage.com/", "http://hawaii.backpage.com/", "http://idaho.backpage.com/", "http://illinois.backpage.com/", "http://indiana.backpage.com/", "http://iowa.backpage.com/", "http://kansas.backpage.com/", "http://kentucky.backpage.com/", "http://louisiana.backpage.com/", "http://maine.backpage.com/", "http://maryland.backpage.com/", "http://massachusetts.backpage.com/", "http://michigan.backpage.com/", "http://minnesota.backpage.com/", "http://mississippi.backpage.com/", "http://missouri.backpage.com/", "http://montana.backpage.com/", "http://nebraska.backpage.com/", "http://nevada.backpage.com/", "http://newhampshire.backpage.com/", "http://newjersey.backpage.com/", "http://newmexico.backpage.com/", "http://newyork.backpage.com/", "http://northcarolina.backpage.com/", "http://northdakota.backpage.com/", "http://ohio.backpage.com/", "http://oklahoma.backpage.com/", "http://oregon.backpage.com/", "http://pennsylvania.backpage.com/", "http://rhodeisland.backpage.com/", "http://southcarolina.backpage.com/", "http://southdakota.backpage.com/", "http://tennessee.backpage.com/", "http://texas.backpage.com/", "http://utah.backpage.com/", "http://vermont.backpage.com/", "http://virginia.backpage.com/", "http://washington.backpage.com/", "http://washingtondc.backpage.com/", "http://westvirginia.backpage.com/", "http://wisconsin.backpage.com/", "http://wyoming.backpage.com/"]
     main(mainURLList)
 ##  Find total time in seconds of program run
-    endTime = pyTimer.endTimer(startTime)
+    pName = os.path.basename(__file__)
+    endTime = pyTimer.endTimer(startTime, pName)
     writeToLog("Program took " + endTime + " to complete.\n")
 ##*********************END PROGRAM*********************##
