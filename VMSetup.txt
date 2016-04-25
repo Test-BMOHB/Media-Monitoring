@@ -1,0 +1,28 @@
+Clone VM (instance-webapp1) or create new VM
+	Allow HTTP and HTTPS
+	Allow full access to all Cloud APIs
+	Ubuntu 15.1
+
+sudo apt-get upgrade
+sudo apt-get upgrade python
+sudo apt-get install python-pip
+
+sudo apt-get install python-dev
+sudo pip install --upgrade setuptools
+sudo apt-get install libxml2-dev libxslt-dev python-dev
+sudo pip install --upgrade requests
+sudo easy_install nltk
+sudo easy_install numpy
+
+create directories (Logs, Scrapes, Code)
+create bash scripts
+create crontab jobs
+
+***********
+If bash scripts are throwing errors because of unexpected /r or unexpected end of file
+Install following and translate bash file to unix
+sudo apt-get install dos2unix
+
+***********
+Copy files to other VMs with below line
+sudo gcloud compute copy-files instance-webapp3:/Scrapes/04202016_VancouverSun_Scrape.csv /var/www/html/Archive --zone us-central1-a
