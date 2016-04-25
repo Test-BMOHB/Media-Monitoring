@@ -7,34 +7,117 @@
         <title>
             Landing Page
         </title>
+		<script type="text/javascript">
+			function fetchHeader(url) {
+				try {
+					var req=new XMLHttpRequest();
+					req.open("HEAD", url, false);
+					req.send(null);
+					if(req.status== 200){
+						var strDT = req.getResponseHeader("Last-Modified");
+						var myDT = new Date(strDT);
+						document.write("Last Updated: " + myDT.toLocaleString());
+					}
+					else if (req.status==403){
+                        document.write("<font color='red'>File is being blocked by your firewall.</font>")
+                    }
+                    else if (req.status==404){
+                        document.write("<font color='red'>No file for this scrape.</font>");
+                    }
+                    else document.write("<font color='red'>Status Error: " + req.status + "</font>");
+				} catch(er) {
+					document.write(er.message);
+				}
+			}
+		</script>
     </head>
 	<body>
 		<h1>Adverse Media Scrapes</h1>
 		<h2>MMJ Scrapes</h2>
-		<a href="Leafly.html">Leafly Scrape</a></br>
-		<a href="PotLocator.html">PotLocator Scrape</a></br>
-		<a href="Weedmaps.html">Weedmaps Scrape</a></br>
-		<a href="MMJ_Merged.html">Merged MMJ Scrape</a></br>
+		<a href="Leafly.html">Leafly Scrape</a>
+		<div style="font-weight:bold">
+			<script type="text/javascript">fetchHeader("/Current/Leafly_MMJScrape.csv");</script>
+		</div>
+		<a href="PotLocator.html">PotLocator Scrape</a>
+		<div style="font-weight:bold">
+			<script type="text/javascript">fetchHeader("/Current/PotLocator_MMJScrape.csv");</script>
+		</div>
+		<a href="Weedmaps.html">Weedmaps Scrape</a>
+		<div style="font-weight:bold">
+			<script type="text/javascript">fetchHeader("/Current/Weedmaps_MMJScrape.csv");</script>
+		</div>
+		<a href="MMJ_Merged.html">Merged MMJ Scrape</a>
+		<div style="font-weight:bold">
+			<script type="text/javascript">fetchHeader("/Current/MMJ_Merged.csv");</script>
+		</div>
 		</br>
 		<h2>WLM Scrapes</h2>
-		<a href="CBSA.html">CBSA Scrape</a></br>
-		<a href="CRA.html">CRA Scrape</a></br>
-		<a href="Fintrac.html">Fintrac Scrape</a></br>
-		<a href="Google_News.html">Google News Scrape</a></br>
-		<a href="Google_News_Panama.html">Google News Panama Papers Scrape</a></br>
+		<a href="CBSA.html">CBSA Scrape</a>
+		<div style="font-weight:bold">
+			<script type="text/javascript">fetchHeader("/Current/CBSA_Scrape.csv");</script>
+		</div>
+		<a href="CRA.html">CRA Scrape</a>
+		<div style="font-weight:bold">
+			<script type="text/javascript">fetchHeader("/Current/CRA_Scrape.csv");</script>
+		</div>
+		<a href="Fintrac.html">Fintrac Scrape</a>
+		<div style="font-weight:bold">
+			<script type="text/javascript">fetchHeader("/Current/Fintrac_Scrape.csv");</script>
+		</div>
+		<a href="Google_News.html">Google News Scrape</a>
+		<div style="font-weight:bold">
+			<script type="text/javascript">fetchHeader("/Current/GoogleNews_Scrape.csv");</script>
+		</div>
+		<a href="Google_News_Panama.html">Google News Panama Papers Scrape</a>
+		<div style="font-weight:bold">
+			<script type="text/javascript">fetchHeader("/Current/GoogleNewsPanama_Scrape.csv");</script>
+		</div>
 		</br>
 		<h2>Newspaper Scrapes</h2>
-		<a href="Calgary_Herald.html">Calgary Herald Scrape</a></br>
-		<a href="CBC_News.html">CBC News Scrape</a></br>
-		<a href="CTV_News.html">CTV News Scrape</a></br>
-		<a href="Globe_Mail.html">Globe & Mail Scrape</a></br>
-		<a href="Montreal_Gazette.html">Montreal Gazette Scrape</a></br>
-		<a href="National_Post.html">National Post Scrape</a></br>
-		<a href="Ottawa_Citizen.html">Ottawa Citizen Scrape</a></br>
-		<a href="Toronto_Star.html">Toronto Star Scrape</a></br>
-		<a href="Toronto_Sun.html">Toronto Sun Scrape</a></br>
-		<a href="Vancouver_Sun.html">Vancouver Sun Scrape</a></br>
+		<a href="Calgary_Herald.html">Calgary Herald Scrape</a>
+		<div style="font-weight:bold">
+			<script type="text/javascript">fetchHeader("/Current/CalgaryHerald_Scrape.csv");</script>
+		</div>
+		<a href="CBC_News.html">CBC News Scrape</a>
+		<div style="font-weight:bold">
+			<script type="text/javascript">fetchHeader("/Current/CBCNews_Scrape.csv");</script>
+		</div>
+		<a href="CTV_News.html">CTV News Scrape</a>
+		<div style="font-weight:bold">
+			<script type="text/javascript">fetchHeader("/Current/CTVNews_Scrape.csv");</script>
+		</div>
+		<a href="Globe_Mail.html">Globe & Mail Scrape</a>
+		<div style="font-weight:bold">
+			<script type="text/javascript">fetchHeader("/Current/GlobeMail_Scrape.csv");</script>
+		</div>
+		<a href="Montreal_Gazette.html">Montreal Gazette Scrape</a>
+		<div style="font-weight:bold">
+			<script type="text/javascript">fetchHeader("/Current/MontrealGazette_Scrape.csv");</script>
+		</div>
+		<a href="National_Post.html">National Post Scrape</a>
+		<div style="font-weight:bold">
+			<script type="text/javascript">fetchHeader("/Current/NationalPost_Scrape.csv");</script>
+		</div>
+		<a href="Ottawa_Citizen.html">Ottawa Citizen Scrape</a>
+		<div style="font-weight:bold">
+			<script type="text/javascript">fetchHeader("/Current/OttawaCitizen_Scrape.csv");</script>
+		</div>
+		<a href="Toronto_Star.html">Toronto Star Scrape</a>
+		<div style="font-weight:bold">
+			<script type="text/javascript">fetchHeader("/Current/TorontoStar_Scrape.csv");</script>
+		</div>
+		<a href="Toronto_Sun.html">Toronto Sun Scrape</a>
+		<div style="font-weight:bold">
+			<script type="text/javascript">fetchHeader("/Current/TorontoSun_Scrape.csv");</script>
+		</div>
+		<a href="Vancouver_Sun.html">Vancouver Sun Scrape</a>
+		<div style="font-weight:bold">
+			<script type="text/javascript">fetchHeader("/Current/VancouverSun_Scrape.csv");</script>
+		</div>
 		<h2>Other Scrapes</h2>
-		<a href="Backpage.html">Backpage Scrape</a></br>
+		<a href="Backpage.html">Backpage Scrape</a>
+		<div style="font-weight:bold">
+			<script type="text/javascript">fetchHeader("/Current/ScreenScrape.csv");</script>
+		</div>
 		</br>
 	</body>
