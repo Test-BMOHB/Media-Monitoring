@@ -19,12 +19,12 @@
 						document.write("Last Updated: " + myDT.toLocaleString());
 					}
 					else if (req.status==403){
-                        document.write("<font color='red'>File is being blocked by your firewall.</font>")
-                    }
-                    else if (req.status==404){
-                        document.write("<font color='red'>No file for this scrape.</font>");
-                    }
-                    else document.write("<font color='red'>Status Error: " + req.status + "</font>");
+						document.write("<font color='red'>File is being blocked by your firewall.</font>")
+					}
+					else if (req.status==404){
+						document.write("<font color='red'>No file for this scrape.</font>");
+					}
+					else document.write("<font color='red'>Status Error: " + req.status + "</font>");
 				} catch(er) {
 					document.write(er.message);
 				}
