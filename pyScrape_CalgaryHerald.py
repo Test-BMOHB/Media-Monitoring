@@ -27,7 +27,7 @@
 ##    2       04/13/2016    Justin Suelflow    Bug fixes (Pager not requesting new Google News pages, break when no links found)
 ##                                                  Add function to gather links and deduplicate links before getting HTML content
 ##   2.1      04/18/2016    Justin Suelflow    mainXPath change and log writing changes
-##   2.2      04/19/2016    Justin Suelflow    Set search string to pull 100 articles at once instead of default(10)
+##   2.2      04/19/2016    Justin Suelflow    Set serach string to pull 100 articles at once instead of default(10)
 ##                                                  Call scrapeinfo function inbetween GN page calls to point to other websites
 ##-----------------------------------------------------------------------------
 ##*********************END HEADER*********************##
