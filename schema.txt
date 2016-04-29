@@ -1,0 +1,14 @@
+[
+{"name": "Date", "type": "STRING", "mode": "nullable"},
+{"name": "Name", "type": "STRING", "mode": "nullable"},
+{"name": "Company", "type": "STRING", "mode": "nullable"},
+{"name": "PhoneNumber", "type": "STRING", "mode": "nullable"},
+{"name": "EmailAddress", "type": "STRING", "mode": "nullable"},
+{"name": "Address", "type": "STRING", "mode": "nullable"},
+{"name": "City", "type": "STRING", "mode": "nullable"},
+{"name": "State", "type": "STRING", "mode": "nullable"},
+{"name": "ZipCode", "type": "STRING", "mode": "nullable"},
+{"name": "Website", "type": "STRING", "mode": "nullable"},
+{"name": "Link", "type": "STRING", "mode": "nullable"},
+{"name": "Scrape", "type": "STRING", "mode": "nullable"}
+]
