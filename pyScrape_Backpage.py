@@ -23,6 +23,8 @@
 ##   5.1      03/08/2016    Justin Suelflow   Change datestamp from YYYY-MM-DD to MMDDYYYY
 ##   5.2      03/31/2016    Justin Suelflow   Added filename var to send to pyTimer
 ##   5.3      04/11/2016    Justin Suelflow   Changed log file path
+##   5.4      04/12/2016    Justin Suelflow   Removed logging to runtime log multiple times
+##    6       04/26/2016    Justin Suelflow   Changed CSV to quoted columns
 ##-----------------------------------------------------------------------------
 ##*********************END HEADER*********************##
 
@@ -213,7 +215,7 @@ def writeToCSV(liCSV, writer):
                     rowStr = rowStr + ''.join(n)
             else:
                 rowStr = rowStr + n
-            rowStr = rowStr + ","
+            rowStr = rowStr + ','
 ##  Take the last ',' off of the rowStr to finish the row
         rowStr = rowStr[:-1]
 ##  If rowStr has more than 3 commas, there is an additional http link that needs to be quoted
@@ -226,13 +228,19 @@ def writeToCSV(liCSV, writer):
             httpStr = httpStr[:endHTTP]
 ##  Find index of second http link
             start2HTTP = rowStr.index(httpStr)
-##  Quotes first http link
-            httpStr = '"' + httpStr + '"'
 ##  Adds the quoted first http link to the second link that is already quoted
             rowStr = rowStr[:startHTTP] + httpStr + rowStr[(start2HTTP + len(httpStr)-2):]
 ##  If the list from above only has 1 number, write the row to the CSV file
         if write:
-            writer.writerow([rowStr.encode('utf-8')])
+            liR = rowStr.split(',')
+            if len(liR) > 4:
+                last = len(liR) - 1
+                urlComma=''
+                for i in range(2, last):
+                    urlComma = urlComma + liR[i]
+                writer.writerow([liR[0],liR[1],urlComma,liR[last]])
+            else:
+                writer.writerow(liR)
         else:
 ##  Take out duplicate phone numbers and websites
             num = list(set(num))
@@ -243,15 +251,29 @@ def writeToCSV(liCSV, writer):
                 li = [e]
                 rowStr = ''.join(li) + rowCopy
                 rowCopy2 = rowStr
-##  Loop through all websites in list to quote them and join them together on each CSV entry
-                for s in site:
-                    s = '"' + s + '"'
-                    lis = [s]
-                    r = rowCopy2.split(',')
-                    rowStr = r[0] + ',' + ''.join(lis) + ',' + r[2] + ',' + r[3]
-                    writer.writerow([rowStr.encode('utf-8')])
                 if len(site) == 0:
-                    writer.writerow([rowStr.encode('utf-8')])
+                    liR = rowStr.split(',')
+                    if len(liR) > 4:
+                        last = len(liR) - 1
+                        urlComma=''
+                        for i in range(2, last):
+                            urlComma = urlComma + liR[i]
+                        writer.writerow([liR[0],liR[1],urlComma,liR[last]])
+                    else:
+                        writer.writerow(liR)
+                else:
+##  Loop through all websites in list to quote them and join them together on each CSV entry
+                    for s in site:
+                        lis = [s]
+                        liR = rowCopy2.split(',')
+                        if len(liR) > 4:
+                            last = len(liR) - 1
+                            urlComma=''
+                            for i in range(2, last):
+                                urlComma = urlComma + liR[i]
+                            writer.writerow([liR[0],''.join(lis),urlComma,liR[last]])
+                        else:
+                            writer.writerow([liR[0],''.join(lis),liR[2],liR[3]])
 
 ##  tinyURL function is commented out because it is not used for runtime considerations
 ##  Function saved if needed to hide the URL links of the postings
@@ -299,15 +321,15 @@ def writeToLog(text):
 ##  Returns	:
 def main(mainURLList):
     currDate = datetime.now()
+    fileDate = currDate.strftime('%m%d%Y')
 ##  Make currDate Yesterday's date
     currDate = currDate - timedelta(days=1)
-    fileDate = currDate.strftime('%m%d%Y')
     currDate = currDate.strftime('%Y-%m-%d')
     writeToLog("*************************** " + currDate + " ***************************\n")
 ##  Open a file and overwrite the existing file or create a new file if needed
     fileName = '/var/www/html/' + fileDate + '_ScreenScrape.csv'
     with open(fileName,'w') as scrapeFile:
-        writer = csv.writer(scrapeFile, delimiter=',', quoting=csv.QUOTE_NONE, escapechar=' ')
+        writer = csv.writer(scrapeFile, delimiter=',', quoting=csv.QUOTE_ALL)
 ##  Add a header row
         writer.writerow(["PhoneNumber","Email_Address","Website","BackPage_Link"])
         try:
@@ -364,14 +386,18 @@ def main(mainURLList):
                         break
                     increment = increment + 1
 		pName = os.path.basename(__file__)
-                writeToLog(pyTimer.endTimer(startT, pName) + mainURL + "\n")
+		endT = time.time()
+                totScrape = endT - startT
+                totScrape = ("{0:.1f}".format(round(totScrape,2)))
+                endStr = str(totScrape) + " seconds"
+                writeToLog("Scrape: " + mainURL + " took " + endStr + "\n")
                 writeToLog("Write to scrape to CSV\n")
 ##  Call createCSV function to write the list data to the scrapeFile
 ##  createCSV needs a list and a writer from the open file to run
                 writeToCSV(liData, writer)
 ##  Sleep for 30 seconds and then request a different page to make it seem like a human is doing the surfing
                 time.sleep(30)
-                requests.get("http://www.google.com")
+                requests.get("http://www.bing.com")
         except:
             e = traceback.format_exc()
             writeToLog("Unexpected error:" + str(e) + "\n")
