@@ -5,7 +5,7 @@
 		<meta name="robots" content="noindex">
 		<meta name="googlebot" content="noindex">
 		<title>
-			CBSA
+			IIROC
 		</title>
 		<style>
 			table {
@@ -19,10 +19,10 @@
 		</style>
 	</head>
 	<body>
-		<a href="/Current/CBSA_Scrape.csv" id="File">CBSA_Scrape.csv</a>
+		<a href="/Current/IIROC_Scrape.csv" id="File">IIROC_Scrape.csv</a>
 		<script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
 		<script type="text/javascript" charset="utf-8">
-			d3.text("/Current/CBSA_Scrape.csv", function(data) {
+			d3.text("/Current/IIROC_Scrape.csv", function(data) {
 				var parsedCSV = d3.csv.parse(data)
 				var header = ["Name", "Link"];
 				var table = d3.select("body").append("table");
