@@ -8,7 +8,7 @@
 ##Prereqs Hardware: 
 ##Prereqs Software: Python, pip, Python-Dev
 ##          Unix install command "sudo apt-get install"
-##Python Libraries: LXML, requests, csv, re, os, datetime, numpy, nltk (numpy is prereq for nltk)
+##Python Libraries: LXML, requests, csv, re, datetime, numpy, os, nltk (numpy is prereq for nltk)
 ##          Unix install python lib command: "sudo pip install"
 ##Needed Python file: pyTimer.py
 ##          pyTimer.py file is found at https://github.com/Test-BMOHB/Media-Monitoring/blob/master/pyTimer.py
@@ -35,6 +35,7 @@
 ##*********************IMPORT*********************##
 ##  Import needed python libraries
 ##  Libraries must be installed using 'pip install'
+##  pyTimer is not installed using pip, the standalone file needs to be placed in the same location as this code file
 from lxml import html
 from lxml.etree import tostring
 from datetime import datetime, timedelta
@@ -59,6 +60,7 @@ def removeDuplicates(dedup):
 ##  Returns	:
 def writeToLog(text):
 ##  Open a log file and append to the end of the log
+##  If no log file is in directory, this will automatically create it
     logFile = open('/Logs/pylog_TorontoSun.txt','a')
     logFile.write(text)
 ##  Close log file
@@ -70,8 +72,7 @@ def writeToLog(text):
 ##  Returns	:
 def createCSV(liCSV, f1):
     writeToLog("Writing to CSV\n")
-##  Use the ^ as a delimiter because the data on Leafly has lots of other special characters including commas
-##  Needed to find a special character that was not used by the data
+##  Use the comma as a delimiter
     writer = csv.writer(f1, delimiter=',', quoting=csv.QUOTE_NONE, escapechar=' ')
 ##  Add a header row to the CSV
     writer.writerow(["Name","Link"])
@@ -82,7 +83,7 @@ def createCSV(liCSV, f1):
         for e in i:
 	    rowStr = rowStr + str(e)
             rowStr = rowStr + ','
-##  Take the last ^ off of the rowStr to finish the row
+##  Take the last comma off of the rowStr to finish the row
         rowStr = rowStr[:-1]
 ##  Write the row to the CSV file
         writer.writerow([rowStr])
@@ -99,9 +100,11 @@ def gatherLinks(mainContent, mainXPath):
     currDate = currDate.strftime('%b %d, %Y')
     currDate = time.strptime(currDate, "%b %d, %Y")
     mainLinksXPath = mainContent.xpath(mainXPath)
+##  Loop through elements in mainLinksXPath
     for mainLinksElements in mainLinksXPath:
         links = mainLinksElements.xpath('.//a[@class="l _HId"]')
         for link in links:
+##  Get the href parameter from the anchor tags
             link = link.get('href')
         d = ''
         dates = mainLinksElements.xpath('.//span[@class="f nsa _uQb"]')
@@ -135,10 +138,12 @@ def scrapeInfo(liLinks, paraXPath):
         try:
 ##  Do a HTTP request on the article link
             linkRequest = requests.get(link)
+##  Translate the content from the request to HTML
             linkContent = html.fromstring(linkRequest.content)
 ##  Find the paraXpath in the article
             linkXPath = linkContent.xpath(paraXPath)
             pageContent = ''
+##  Loop through elements in lXPath
             for linkXElement in linkXPath:
                 text = tostring(linkXElement)
 ##  Delete all icons and small emojis from HTML text
@@ -186,7 +191,7 @@ def extractNames(li):
         if len(f) > 0:
             strName = ''
             for index, i in enumerate(f):
-##  If strName is blank, declare it with the next word in the list
+##  If strName is blank, declare it with the current word in the list
                 if strName == '':
                     strName = i[1][0]
 ##  If index+1 is not at the end of the list, continue
@@ -207,10 +212,12 @@ def extractNames(li):
 ##  Parameters	: mainURLList = list type
 ##  Returns	:
 def main(mainURL, mainXPath, paraXPath, fileName, queryLi):
+##  Automatically creates file if it does not exist
     with open(fileName,'w') as scrapeFile:
         nameLi = []
         liLinks = []
         htmlLi = []
+##  Set header variable to trick the http request to think a web browser is opening the page
         header = {'User-Agent': 'Mozilla/Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36'}
 ##  Loop through the search queries
         for q in queryLi:
@@ -219,6 +226,7 @@ def main(mainURL, mainXPath, paraXPath, fileName, queryLi):
             while increment < 11:
                 url = mainURL + q
                 if increment == 0:
+##  Http request the mainURL with a header variable
                     mainRequest = requests.get(url, headers=header)
                 else:
                     url = url + "&start=" + str(increment * 100)
@@ -226,6 +234,7 @@ def main(mainURL, mainXPath, paraXPath, fileName, queryLi):
                 if mainRequest.status_code != requests.codes.ok:
                     break
                 else:
+##  Translate mainRequest content into HTML
                     mainContent = html.fromstring(mainRequest.content)
                     writeToLog("Gathering links from URL: " + url + "\n")
                     liIncrementLinks = gatherLinks(mainContent, mainXPath)
