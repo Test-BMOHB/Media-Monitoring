@@ -1,8 +1,34 @@
+##*********************HEADER*********************##
+##Developer     : Justin Suelflow
+##Date          : 5/2/2016
+##Program Name  : pyAllScrapesLoad.py
+##Description   : Review recent articles listed across the prvince and territory links
+##Python Version: 2.7.11
+##Prereqs Knowledge: Python, HTML, CSS, XPath, NLTK
+##Prereqs Hardware: 
+##Prereqs Software: Python, pip
+##          Unix install command "sudo apt-get install"
+##Python Libraries: csv, datetime, os
+##          Unix install python lib command: "sudo pip install"
+##Run command: sudo python pyAllScrapesLoad.py
+##-----------------------------------------------------------------------------
+## Version  | mm/dd/yyyy  |  User           |                Changes
+##    1       05/03/2016    Justin Suelflow    Initial Version
+##-----------------------------------------------------------------------------
+##*********************END HEADER*********************##
+
+##*********************IMPORT*********************##
+##  Import needed python libraries
+##  Libraries must be installed using 'pip install'
 import csv, traceback, os.path
 from datetime import datetime
-cDate = datetime.now()
-fileDate = cDate.strftime('%m%d%Y')
-cDate = cDate.strftime('%m/%d/%Y')
+##*********************END IMPORT*********************##
+
+##*********************FUNCTIONS*********************##
+##  Function	: createLoadFile
+##  Description	: Create a load file each scrape to load into Big Query
+##  Parameters	: filename, loadfile, delimit, cDate, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, scrape = string types
+##  Returns	:
 def createLoadFile(filename, loadfile, delimit, cDate, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, scrape):
     try:
         li = []
@@ -64,6 +90,14 @@ def createLoadFile(filename, loadfile, delimit, cDate, r1, r2, r3, r4, r5, r6, r
         e = traceback.format_exc()
         print scrape + " did not translate properly\nUnexpected Error: " + str(e) + "\n"
 
+##*********************END FUNCTIONS*********************##
+
+##*********************PROGRAM*********************##
+##  Create date variables
+cDate = datetime.now()
+fileDate = cDate.strftime('%m%d%Y')
+cDate = cDate.strftime('%m/%d/%Y')
+##  Create string variables where the files are located
 fGN="/var/www/html/Archive/" + fileDate + "_GoogleNews_Scrape.csv"
 fGNP="/var/www/html/Archive/" + fileDate + "_GoogleNewsPanama_Scrape.csv"
 fCBSA="/var/www/html/Archive/" + fileDate + "_CBSA_Scrape.csv"
@@ -83,7 +117,10 @@ fOC="/var/www/html/Archive/" + fileDate + "_OttawaCitizen_Scrape.csv"
 fTST="/var/www/html/Archive/" + fileDate + "_TorontoStar_Scrape.csv"
 fTSu="/var/www/html/Archive/" + fileDate + "_TorontoSun_Scrape.csv"
 fVS="/var/www/html/Archive/" + fileDate + "_VancouverSun_Scrape.csv"
+fIR="/var/www/html/Archive/" + fileDate + "_IIROC_Scrape.csv"
+fTT="/var/www/html/Archive/" + fileDate + "_TopTen_Scrape.csv"
 
+##  If the files exist and have data, create load files
 if os.path.isfile(fGN):
     if os.path.getsize(fGN) > 0:
 	createLoadFile(fGN, '/var/www/html/Current/GoogleNews_Scrape_Load.csv', ',', cDate, 0, '', '', '', '', '', '', '', '', 1, 'Google News')
@@ -159,3 +196,11 @@ if os.path.isfile(fTSu):
 if os.path.isfile(fVS):
     if os.path.getsize(fVS) > 0:
 	createLoadFile(fVS, '/var/www/html/Current/VancouverSun_Scrape_Load.csv', ',', cDate, 0, '', '', '', '', '', '', '', '', 1, 'Vancouver Sun')
+
+if os.path.isfile(fIR):
+    if os.path.getsize(fIR) > 0:
+        createLoadFile(fIR, '/var/www/html/Current/IIROC_Scrape_Load.csv', ',', cDate, 0, '', '', '', '', '', '', '', '', 1, 'IIROC')
+
+if os.path.isfile(fTT):
+    if os.path.getsize(fTT) > 0:
+        createLoadFile(fTT, '/var/www/html/Current/TopTen_Scrape_Load.csv', ',', cDate, 0, '', '', '', '', '', '', '', '', 2, 'Quebec Top Ten Most Wanted')
