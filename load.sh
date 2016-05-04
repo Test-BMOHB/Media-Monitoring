@@ -1,7 +1,8 @@
 #!/bin/bash
-
+# Run the python file to create Big Query load files and save output to the Log files
+# 2>&1 means to move the standard output and error output of the scrapes to the logs
 sudo python /var/www/html/BQ/pyAllScrapesLoad.py >> /var/www/html/Logs/pylog_CombineScrapes.txt 2>&1
-
+# Create file variables for where they are located on the VM
 fBP="/var/www/html/Current/ScreenScrape_Load.csv"
 fWM="/var/www/html/Current/Weedmaps_MMJScrape_Load.csv"
 fL="/var/www/html/Current/Leafly_MMJScrape_Load.csv"
@@ -21,11 +22,16 @@ fOC="/var/www/html/Current/OttawaCitizen_Scrape_Load.csv"
 fTST="/var/www/html/Current/TorontoStar_Scrape_Load.csv"
 fTSu="/var/www/html/Current/TorontoSun_Scrape_Load.csv"
 fVS="/var/www/html/Current/VancouverSun_Scrape_Load.csv"
-
+fIR="/var/www/html/Current/IIROC_Scrape_Load.csv"
+fTT="/var/www/html/Current/TopTen_Scrape_Load.csv"
+# If files exist (-f) and are not empty (-s), then load the files to the Big Query table bmo_web_crawler.AllScrapes
+# Skip the leading header row
+# Use a comma as the delimiter
+# Use the schema.txt file as the Big Query load schema
 if [ -f $fBP ] && [ -s $fBP ]; then
 	sudo bq load  --skip_leading_rows=1 --field_delimiter=',' --max_bad_records=5 bmo_web_crawler.AllScrapes $fBP /var/www/html/BQ/schema.txt >> /var/www/html/Logs/pylog_LoadScrapes.txt 2>&1
 fi
-
+# Use a carat as the delimiter
 if [ -f $fWM ] && [ -s $fWM ]; then
 	sudo bq load --quote='' --skip_leading_rows=1 --field_delimiter='^' --max_bad_records=5 bmo_web_crawler.AllScrapes $fWM /var/www/html/BQ/schema.txt >> /var/www/html/Logs/pylog_LoadScrapes.txt 2>&1
 fi
@@ -98,5 +104,14 @@ if [ -f $fVS ] && [ -s $fVS ]; then
 	sudo bq load --quote='' --skip_leading_rows=1 --field_delimiter=',' --max_bad_records=5 bmo_web_crawler.AllScrapes $fVS /var/www/html/BQ/schema.txt >> /var/www/html/Logs/pylog_LoadScrapes.txt 2>&1
 fi
 
+if [ -f $fIR ] && [ -s $fIR ]; then
+        sudo bq load --quote='' --skip_leading_rows=1 --field_delimiter=',' --max_bad_records=5 bmo_web_crawler.AllScrapes $fIR /var/www/html/BQ/schema.txt >> /var/www/html/Logs/pylog_LoadScrapes.txt 2>&1
+fi
+
+if [ -f $fTT ] && [ -s $fTT ]; then
+        sudo bq load  --skip_leading_rows=1 --field_delimiter=',' --max_bad_records=5 bmo_web_crawler.AllScrapes $fTT /var/www/html/BQ/schema.txt >> /var/www/html/Logs/pylog_LoadScrapes.txt 2>&1
+fi
+# Run a Big Query query to overwrite the bmo_web_crawler.AllScrapesNoDup table with the deduplicated data from the bmo_web_crawler.AllScrapes table
 sudo bq query --destination_table=bmo_web_crawler.AllScrapesNoDup --replace --quiet "SELECT Name, Company, PhoneNumber, EmailAddress, Address, City, State, ZipCode, Website, COUNT(*) as NumOfDups FROM bmo_web_crawler.AllScrapes GROUP BY Name, Company, PhoneNumber, EmailAddress, Address, City, State, ZipCode, Website" >> /var/www/html/Logs/pylog_LoadScrapes.txt 2>&1 ;
+# Remove all of the Load CSV files from the Current directory
 sudo rm /var/www/html/Current/*_Load.csv

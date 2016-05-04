@@ -1,8 +1,10 @@
 #!/bin/bash
-
+# Print all rows from the MMJ Scrapes except for the first row to the MMJ_Merged CSV file
+# & means that the next line is dependent on the current line completing successfully without errors
+# Rename the MMJ_Merged CSV file to have a datestamp
 sudo awk 'FNR==1 && NR!=1{next;}{print}' /var/www/html/*_MMJScrape.csv > /var/www/html/MMJ_Merged.csv &&
 sudo mv /var/www/html/MMJ_Merged.csv /var/www/html/`date +\%m\%d\%Y`_MMJ_Merged.csv
-
+# Create file variables for where they are located on the VM
 fBP="/var/www/html/`date +\%m\%d\%Y`_ScreenScrape.csv"
 fWM="/var/www/html/`date +\%m\%d\%Y`_Weedmaps_MMJScrape.csv"
 fL="/var/www/html/`date +\%m\%d\%Y`_Leafly_MMJScrape.csv"
@@ -23,7 +25,12 @@ fOC="/var/www/html/`date +\%m\%d\%Y`_OttawaCitizen_Scrape.csv"
 fTST="/var/www/html/`date +\%m\%d\%Y`_TorontoStar_Scrape.csv"
 fTSu="/var/www/html/`date +\%m\%d\%Y`_TorontoSun_Scrape.csv"
 fVS="/var/www/html/`date +\%m\%d\%Y`_VancouverSun_Scrape.csv"
-
+fIR="/var/www/html/`date +\%m\%d\%Y`_IIROC_Scrape.csv"
+fTT="/var/www/html/`date +\%m\%d\%Y`_TopTen_Scrape.csv"
+# If files exist (-f) and are not empty (-s)
+# Then remove the current file out of the Current directory
+# and Copy the file to the Current directory
+# and Move the file to the Archive directory
 if [ -f $fBP ] && [ -s $fBP ]; then
 	sudo rm /var/www/html/Current/ScreenScrape.csv &&
 	sudo cp $fBP /var/www/html/Current/ &&
@@ -144,4 +151,16 @@ if [ -f $fVS ] && [ -s $fVS ]; then
 	sudo mv $fVS /var/www/html/Archive/
 fi
 
+if [ -f $fIR ] && [ -s $fIR ]; then
+        sudo rm /var/www/html/Current/IIROC_Scrape.csv &&
+        sudo cp $fIR /var/www/html/Current/ &&
+        sudo mv $fIR /var/www/html/Archive/
+fi
+
+if [ -f $fTT ] && [ -s $fTT ]; then
+        sudo rm /var/www/html/Current/TopTen_Scrape.csv &&
+        sudo cp $fTT /var/www/html/Current/ &&
+        sudo mv $fTT /var/www/html/Archive/
+fi
+# Rename all CSV files with datestamps in the Current directory without a datestamp
 sudo rename 's/ *[0-9]{8}_//' /var/www/html/Current/*.csv
