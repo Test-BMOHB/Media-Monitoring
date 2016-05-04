@@ -88,24 +88,35 @@ def createCSV(liCSV, f1):
 def scrapeInfo(mainContent, mainXPath, linkXPath, paraXPath):
     li = []
     mainLinksXPath = mainContent.xpath(mainXPath)
+##  Creates a set of mainLinksXPath which takes out the duplicates and then format the set back to a list
     mainLinksXPath = list(set(mainLinksXPath))
+##  Loop through elements in mainLinksXPath
     for mainLinksElements in mainLinksXPath:
+##  Translate the element to a string and then formate to HTML
         link = tostring(mainLinksElements)
         link = html.fromstring(link)
+##  Use xpath to get all anchor tags in HTML element
         link = link.xpath('//a')
+##  Loop through each element in the xpath
+##  This will loop through all anchor tags
         for i in link:
+##  Get the href parameter from the anchor tags
             i = i.get('href')
             if 'http' not in i:
                 i = 'http://www.cra-arc.gc.ca' + i
 ##  Do a HTTP request on the article link
             linkRequest = requests.get(i)
+##  Translate the content from the request to HTML
             linkContent = html.fromstring(linkRequest.content)
-##  Find the paraXpath in the article
+##  Use xpath to find the elements in the article's HTML
             lXPath = linkContent.xpath(linkXPath)
+##  Loop through elements in lXPath
             for linkXElement in lXPath:
                 text = tostring(linkXElement)
                 text = html.fromstring(text)
                 text = text.xpath('//a')
+##  Loop through all characters in the xpath text
+##  This loop looks through the text to find the opening and closing brackets to create a proper dictionary
                 for a in text:
                     a = tostring(a)
                     a = html.fromstring(a)
@@ -182,7 +193,9 @@ def main(mainURL, mainXPath, linkXPath, paraXPath, fileName):
 ##  Automatically creates file if it does not exist
     with open(fileName,'w') as scrapeFile:
         nameLi = []
+##  Set header variable to trick the http request to think a web browser is opening the page
         header = {'User-Agent': 'Mozilla/Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36'}
+##  Http request the mainURL with a header variable
         mainRequest = requests.get(mainURL, headers=header)
 ##  Translate mainRequest content into HTML
         mainContent = html.fromstring(mainRequest.content)

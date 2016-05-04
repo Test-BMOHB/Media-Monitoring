@@ -7,9 +7,15 @@
 ##Python Version    : 2.7.11
 ##Prereqs Knowledge : Python, HTML, CSS, XPath
 ##Prereqs Hardware  : Any computer that has a C++ compiler (libxml2 uses C++)
-##Prereqs Software  : Python, pip
-##Python Libraries  : LXML, requests, csv, json, re, libxml2, libxslt, os, datetime, time, traceback, sys
-##Python file       : pyTimer.py file needs to be in same directory as pyScrape.py
+##Prereqs Software: Python, pip
+##          Unix install command "sudo apt-get install"
+##Python Libraries: LXML, requests, csv, json, re, libxml2, libxslt, os, datetime, time, traceback, sys
+##          Unix install python lib command: "sudo pip install"
+##Needed Python file: pyTimer.py
+##          pyTimer.py file is found at https://github.com/Test-BMOHB/Media-Monitoring/blob/master/pyTimer.py
+##Log file saved at: /var/www/html/Logs/pylog_Backpage.txt
+##CSV file saved at: /var/www/html/mmddyyyy_ScreenScrape.csv
+##Run command: sudo python pyScrape_Backpage.py
 ##Static variables  : '/var/www/html/Logs/pylog_Backpage.txt', '/var/www/html/ScreenScrape.csv', "adult/?page=",
 ##                      regex for finding phone numbers, header row, all xpath, and mainURLList
 ##-----------------------------------------------------------------------------
@@ -31,7 +37,7 @@
 ##*********************IMPORT*********************##
 ##  Import needed python libraries
 ##  Libraries must be installed using 'pip install'
-##  pyTimer.py file is found at https://github.com/Test-BMOHB/Media-Monitoring/blob/master/pyTimer.py
+##  pyTimer is not installed using pip, the standalone file needs to be placed in the same location as this code file
 from lxml import html
 from lxml.etree import tostring
 from datetime import datetime, timedelta
@@ -309,6 +315,7 @@ def removeDuplicates(dedup):
 ##  Returns	:
 def writeToLog(text):
 ##  Open a log file and append to the end of the log
+##  If no log file is in directory, this will automatically create it
     logFile = open('/var/www/html/Logs/pylog_Backpage.txt','a')
     logFile.write(text)
 ##  Close log file
@@ -328,6 +335,7 @@ def main(mainURLList):
     writeToLog("*************************** " + currDate + " ***************************\n")
 ##  Open a file and overwrite the existing file or create a new file if needed
     fileName = '/var/www/html/' + fileDate + '_ScreenScrape.csv'
+##  Automatically creates file if it does not exist
     with open(fileName,'w') as scrapeFile:
         writer = csv.writer(scrapeFile, delimiter=',', quoting=csv.QUOTE_ALL)
 ##  Add a header row

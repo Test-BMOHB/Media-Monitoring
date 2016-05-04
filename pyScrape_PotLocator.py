@@ -9,7 +9,12 @@
 ##Prereqs Hardware: Any computer that has a C++ compiler (libxml2 uses C++)
 ##Prereqs Software: Python, pip
 ##Python Libraries: LXML, requests, csv, json, re, os, libxml2, libxslt, datetime
-##Static variables: 'Data":'
+##          Unix install python lib command: "sudo pip install"
+##Needed Python file: pyTimer.py
+##          pyTimer.py file is found at https://github.com/Test-BMOHB/Media-Monitoring/blob/master/pyTimer.py
+##Log file saved at: /var/www/html/Logs/pylog_PotLocator.txt
+##CSV file saved at: /var/www/html/mmddyyyy_PotLocator_Scrape.csv
+##Run command: sudo python pyScrape_PotLocator.py
 ##-----------------------------------------------------------------------------
 ## Version  | mm/dd/yyyy  |  User           |                Changes
 ##    1       03/01/2016    Justin Suelflow   Initial Draft
@@ -19,10 +24,12 @@
 ##   2.3      03/31/2016    Justin Suelflow   Added filename var to send to pyTimer
 ##   2.4      04/11/2016    Justin Suelflow   Changed log file path
 ##-----------------------------------------------------------------------------
+##*********************END HEADER*********************##
+
 ##*********************IMPORT*********************##
 ##  Import needed python libraries
 ##  Libraries must be installed using 'pip install'
-##  pyTimer.py file is found at https://github.com/Test-BMOHB/Media-Monitoring/blob/master/pyTimer.py
+##  pyTimer is not installed using pip, the standalone file needs to be placed in the same location as this code file
 from lxml import html
 from lxml.etree import tostring
 from datetime import datetime
@@ -30,6 +37,49 @@ import requests, csv, re, json, pyTimer, os.path
 ##*********************END IMPORT*********************##
 
 ##*********************FUNCTIONS*********************##
+##  Function	: removeDuplicates
+##  Description	: Remove exact duplicate list entries
+##  Parameters	: dedup = list type
+##  Returns	: list
+def removeDuplicates(dedup):
+    finalList = []
+    for x in dedup:
+        if x not in finalList:
+            finalList.append(x)
+    return finalList
+
+##  Function	: writeToLog
+##  Description	: Write text to log
+##  Parameters	: text = string type
+##  Returns	:
+def writeToLog(text):
+##  Open a log file and append to the end of the log
+##  If no log file is in directory, this will automatically create it
+    logFile = open('/var/www/html/Logs/pylog_PotLocator.txt','a')
+    logFile.write(text)
+##  Close log file
+    logFile.close()
+
+##  Function	: createCSV
+##  Description	: Writes list to a CSV file
+##  Parameters	: liCSV = list type, f1 = file type
+##  Returns	:
+def createCSV(liCSV):
+    writeToLog("Writing to CSV\n")
+##  Use the ^ as a delimiter because the data on WeedMaps has lots of other special characters including commas
+##  Needed to find a special character that was not used by the data
+##  Loop through all elements in the list
+    for i in liCSV:
+        rowStr = ''
+##  Some elements are lists so it is needed to loop through each element again
+        for e in i:
+            rowStr = rowStr + e.encode('utf-8')
+            rowStr = rowStr + '^'
+##  Take the last ^ off of the rowStr to finish the row
+        rowStr = rowStr[:-1]
+##  Write the row to the CSV file
+        writer.writerow([rowStr])
+
 ##  Function	: scrapeInfo
 ##  Description	: Scrapes name, phone number, address, city, state, zip code and url from mainRequest text
 ##  Parameters	: mainRequest =  = request.post type, loc = string type
@@ -104,48 +154,6 @@ def scrapeInfo(requestText, loc):
             continue
     return li
 
-##  Function	: removeDuplicates
-##  Description	: Remove exact duplicate list entries
-##  Parameters	: dedup = list type
-##  Returns	: list
-def removeDuplicates(dedup):
-    finalList = []
-    for x in dedup:
-        if x not in finalList:
-            finalList.append(x)
-    return finalList
-
-##  Function	: createCSV
-##  Description	: Writes list to a CSV file
-##  Parameters	: liCSV = list type, f1 = file type
-##  Returns	: 
-def createCSV(liCSV):
-    writeToLog("Writing to CSV\n")
-##  Use the ^ as a delimiter because the data on WeedMaps has lots of other special characters including commas
-##  Needed to find a special character that was not used by the data
-##  Loop through all elements in the list
-    for i in liCSV:
-        rowStr = ''
-##  Some elements are lists so it is needed to loop through each element again
-        for e in i:
-            rowStr = rowStr + e.encode('utf-8')
-            rowStr = rowStr + '^'
-##  Take the last ^ off of the rowStr to finish the row
-        rowStr = rowStr[:-1]
-##  Write the row to the CSV file
-        writer.writerow([rowStr])
-
-##  Function	: writeToLog
-##  Description	: Write text to log
-##  Parameters	: text = string type
-##  Returns	: 
-def writeToLog(text):
-##  Open a log file and append to the end of the log
-    logFile = open('/var/www/html/Logs/pylog_PotLocator.txt','a')
-    logFile.write(text)
-##  Close log file
-    logFile.close()
-
 ##*********************MAIN FUNCTION*********************##
 ##  Function	: main
 ##  Description	: Opens file and call other functions
@@ -192,5 +200,4 @@ if __name__ == "__main__":
     pName = os.path.basename(__file__)
     endTime = pyTimer.endTimer(startTime, pName)
     writeToLog("Program took " + endTime + " to complete.\n")
-
 ##*********************END PROGRAM*********************##
