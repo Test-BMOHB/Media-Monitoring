@@ -1,4 +1,18 @@
 #!/bin/bash
+##*********************HEADER*********************##
+##Developer     : Justin Suelflow
+##Date          : 5/4/2016
+##Program Name  : transferFiles.sh
+##Description   : Moves files from other VMs that run scrapes to the VM that runs this file. Then copies those files to the Current directory
+##Prereqs Knowledge: Unix Bash scripting, gcloud command line
+##Prereqs Hardware: Unix VM
+##Prereqs Software: gcloud
+##Run command: sudo bash transferFiles.sh
+##-----------------------------------------------------------------------------
+## Version  | mm/dd/yyyy  |  User           |                Changes
+##    1       05/04/2016    Justin Suelflow    Initial Version
+##-----------------------------------------------------------------------------
+##*********************END HEADER*********************##
 # Create file variables for where they are located on the VM
 fCH="`date +\%m\%d\%Y`_CalgaryHerald_Scrape.csv"
 fCBC="`date +\%m\%d\%Y`_CBCNews_Scrape.csv"

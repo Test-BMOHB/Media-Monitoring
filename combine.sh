@@ -1,4 +1,18 @@
 #!/bin/bash
+##*********************HEADER*********************##
+##Developer     : Justin Suelflow
+##Date          : 5/4/2016
+##Program Name  : combine.sh
+##Description   : Merges MMJ scrapes into one file and moves other scrapes to the Archive and Current directory
+##Prereqs Knowledge: Unix Bash scripting
+##Prereqs Hardware: Unix VM
+##Prereqs Software: 
+##Run command: sudo bash combine.sh
+##-----------------------------------------------------------------------------
+## Version  | mm/dd/yyyy  |  User           |                Changes
+##    1       05/04/2016    Justin Suelflow    Initial Version
+##-----------------------------------------------------------------------------
+##*********************END HEADER*********************##
 # Print all rows from the MMJ Scrapes except for the first row to the MMJ_Merged CSV file
 # & means that the next line is dependent on the current line completing successfully without errors
 # Rename the MMJ_Merged CSV file to have a datestamp

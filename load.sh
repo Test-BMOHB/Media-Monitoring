@@ -1,4 +1,18 @@
 #!/bin/bash
+##*********************HEADER*********************##
+##Developer     : Justin Suelflow
+##Date          : 5/4/2016
+##Program Name  : load.sh
+##Description   : Runs python pyAllScrapesLoad file then loads the files created from that python code to Big Query
+##Prereqs Knowledge: Unix Bash scripting, Big Query command line
+##Prereqs Hardware: Unix VM
+##Prereqs Software: bq
+##Run command: sudo bash load.sh
+##-----------------------------------------------------------------------------
+## Version  | mm/dd/yyyy  |  User           |                Changes
+##    1       05/04/2016    Justin Suelflow    Initial Version
+##-----------------------------------------------------------------------------
+##*********************END HEADER*********************##
 # Run the python file to create Big Query load files and save output to the Log files
 # 2>&1 means to move the standard output and error output of the scrapes to the logs
 sudo python /var/www/html/BQ/pyAllScrapesLoad.py >> /var/www/html/Logs/pylog_CombineScrapes.txt 2>&1
